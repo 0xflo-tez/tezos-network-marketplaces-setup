@@ -7,6 +7,10 @@ if [ -z ${ADMIN_ADDRESS+x} ];
 then echo "Missing env var: ADMIN_ADDRESS";
 fi
 
+if [ -z ${NFT_OWNER+x} ];
+then echo "Missing env var: NFT_OWNER";
+fi
+
 if [ -z ${ORIGINATOR_ALIAS+x} ];
 then echo "Missing env var: ORIGINATOR_ALIAS";
 fi
@@ -27,7 +31,7 @@ mkdir -p data
 echo "Downloading contract codes..."
 
 echo "- Downloading OBJKT Permission module..."
-tezos-client -E $MAINNET_NODE get contract code for KT1DF2c7VUED7W3h5BnqUKdB87Ke7XdCjQiY > data/objkt_permission_module.tz
+tezos-client -E $MAINNET_NODE get contract code for KT1R8i4sXujWN69bRQFdtZ56wXcbc3qxhkTX > data/objkt_permission_module.tz
 echo "--> Downloaded OBJKT Permission module"
 
 echo "- Downloading OBJKT Token Registry..."
@@ -38,10 +42,20 @@ echo "- Downloading OBJKT Marketplace..."
 tezos-client -E $MAINNET_NODE get contract code for KT1WvzYHCNBvDSdwafTHv7nJ1dWmZ8GCYuuC > data/objkt_marketplace.tz
 echo "--> Downloaded OBJKT Marketplace"
 
+echo "- Downloading OBJKT FA2..."
+tezos-client -E $MAINNET_NODE get contract code for KT1EffErZNVCPXW2trCMD5gGkACdAbAzj4tT > data/objkt_fa2.tz
+echo "--> Downloaded OBJKT FA2"
+
 echo
 
+echo "Deploying OBJKT FA2"
+tezos-client -E $TARGET_NODE originate contract objkt_permission_module_$NETWORK transferring 0 from $ORIGINATOR_ALIAS running data/objkt_fa2.tz --init '(Pair (Pair (Pair "'$ADMIN_ADDRESS'" 0) (Pair {} {})) (Pair (Pair {} False) (Pair {} {})))' --burn-cap 10 --force > data/fa2_deploy.txt
+objkt_fa2=$(sed -n '/^.*New[[:space:]]contract[[:space:]]\{1,\}\([-_[:alnum:]]\{1,\}\).*$/s//\1/p' data/fa2_deploy.txt)
+echo $objkt_fa2
+
+
 echo "Deploying OBJKT Permission module"
-tezos-client -E $TARGET_NODE originate contract objkt_permission_module_$NETWORK transferring 0 from $ORIGINATOR_ALIAS running data/objkt_permission_module.tz --init '"'$ADMIN_ADDRESS'"' --burn-cap 1.8225 --force > data/permission_module_deploy.txt
+tezos-client -E $TARGET_NODE originate contract objkt_permission_module_$NETWORK transferring 0 from $ORIGINATOR_ALIAS running data/objkt_permission_module.tz --init '(Pair (Pair (Pair "'$ADMIN_ADDRESS'" "'$ADMIN_ADDRESS'") (Pair "'$ADMIN_ADDRESS'" {})) (Pair (Pair {} False) (Pair False (Pair None "'$ADMIN_ADDRESS'"))))' --burn-cap 1.8225 --force > data/permission_module_deploy.txt
 permission_module_contract=$(sed -n '/^.*New[[:space:]]contract[[:space:]]\{1,\}\([-_[:alnum:]]\{1,\}\).*$/s//\1/p' data/permission_module_deploy.txt)
 echo $permission_module_contract
 
@@ -1548,3 +1562,7 @@ tezos-client -E $TARGET_NODE originate contract objkt_marketplace_$NETWORK trans
                 PAIR } } })' --burn-cap 10 --force > data/marketplace_deploy.txt
 marketplace_contract=$(sed -n '/^.*New[[:space:]]contract[[:space:]]\{1,\}\([-_[:alnum:]]\{1,\}\).*$/s//\1/p' data/marketplace_deploy.txt)
 echo $marketplace_contract
+
+
+tezos-client -E $TARGET_NODE transfer 0 from $ORIGINATOR_ALIAS to $marketplace_contract --entrypoint "delegate" --arg "Unit"
+tezos-client -E $TARGET_NODE transfer 0 from $ORIGINATOR_ALIAS to $objkt_fa2 --entrypoint "mint" --arg 'Pair (Pair "'$NFT_OWNER'" 10000) (Pair { Elt "" 0x697066733a2f2f516d58654b3661595555487164655152396e36437952727464466b546d5966746b504847426d74794762554a314d } 0)' --burn-cap 10
