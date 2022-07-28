@@ -1,0 +1,225 @@
+{ parameter
+    (or (or (or (unit %accept_admin) (address %add_mod))
+            (or (address %propose_admin) (address %remove_mod)))
+        (or (or (unit %revoke_pausbility) (unit %toggle_pause))
+            (or (address %update_baking_reward_collector)
+                (or (key_hash %update_delegate) (address %update_treasury))))) ;
+  storage
+    (pair (pair (pair (address %admin) (address %baking_reward_collector))
+                (key_hash %delegate)
+                (big_map %metadata string bytes))
+          (pair (set %mods address) (bool %pausable))
+          (bool %paused)
+          (option %proposed_admin address)
+          (address %treasury)) ;
+  code { CAST (pair (or (or (or unit address) (or address address))
+                        (or (or unit unit) (or address (or key_hash address))))
+                    (pair (pair (pair address address) (pair key_hash (big_map string bytes)))
+                          (pair (pair (set address) bool) (pair bool (pair (option address) address))))) ;
+         UNPAIR ;
+         IF_LEFT
+           { IF_LEFT
+               { IF_LEFT
+                   { DROP ;
+                     DUP ;
+                     GET 7 ;
+                     IF_NONE { PUSH int 47 ; FAILWITH } {} ;
+                     DUP ;
+                     SENDER ;
+                     COMPARE ;
+                     EQ ;
+                     IF {} { PUSH string "PM_ONLY_PROPOSED_ADMIN" ; FAILWITH } ;
+                     SWAP ;
+                     UNPAIR ;
+                     UNPAIR ;
+                     CDR ;
+                     DIG 3 ;
+                     PAIR ;
+                     PAIR ;
+                     PAIR ;
+                     NONE address ;
+                     UPDATE 7 }
+                   { SWAP ;
+                     DUP ;
+                     DUG 2 ;
+                     CAR ;
+                     CAR ;
+                     CAR ;
+                     SENDER ;
+                     COMPARE ;
+                     EQ ;
+                     IF {} { PUSH string "PM_ONLY_ADMIN" ; FAILWITH } ;
+                     SWAP ;
+                     UNPAIR ;
+                     SWAP ;
+                     UNPAIR ;
+                     UNPAIR ;
+                     PUSH bool True ;
+                     DIG 5 ;
+                     UPDATE ;
+                     PAIR ;
+                     PAIR ;
+                     SWAP ;
+                     PAIR } }
+               { IF_LEFT
+                   { SWAP ;
+                     DUP ;
+                     DUG 2 ;
+                     CAR ;
+                     CAR ;
+                     CAR ;
+                     SENDER ;
+                     COMPARE ;
+                     EQ ;
+                     IF {} { PUSH string "PM_ONLY_ADMIN" ; FAILWITH } ;
+                     SOME ;
+                     UPDATE 7 }
+                   { SWAP ;
+                     DUP ;
+                     DUG 2 ;
+                     CAR ;
+                     CAR ;
+                     CAR ;
+                     SENDER ;
+                     COMPARE ;
+                     EQ ;
+                     IF {} { PUSH string "PM_ONLY_ADMIN" ; FAILWITH } ;
+                     SWAP ;
+                     UNPAIR ;
+                     SWAP ;
+                     UNPAIR ;
+                     UNPAIR ;
+                     PUSH bool False ;
+                     DIG 5 ;
+                     UPDATE ;
+                     PAIR ;
+                     PAIR ;
+                     SWAP ;
+                     PAIR } } }
+           { IF_LEFT
+               { IF_LEFT
+                   { DROP ;
+                     DUP ;
+                     CAR ;
+                     CAR ;
+                     CAR ;
+                     SENDER ;
+                     COMPARE ;
+                     EQ ;
+                     IF {} { PUSH string "PM_ONLY_ADMIN" ; FAILWITH } ;
+                     UNPAIR ;
+                     SWAP ;
+                     UNPAIR ;
+                     CAR ;
+                     PUSH bool False ;
+                     SWAP ;
+                     PAIR ;
+                     PAIR ;
+                     SWAP ;
+                     PAIR ;
+                     PUSH bool False ;
+                     UPDATE 5 }
+                   { DROP ;
+                     DUP ;
+                     CAR ;
+                     CAR ;
+                     CAR ;
+                     SENDER ;
+                     COMPARE ;
+                     EQ ;
+                     IF {} { PUSH string "PM_ONLY_ADMIN" ; FAILWITH } ;
+                     DUP ;
+                     GET 5 ;
+                     IF {}
+                        { DUP ;
+                          GET 3 ;
+                          CDR ;
+                          IF {} { PUSH string "PM_NOT_PAUSABLE" ; FAILWITH } } ;
+                     DUP ;
+                     GET 5 ;
+                     NOT ;
+                     UPDATE 5 } }
+               { IF_LEFT
+                   { SWAP ;
+                     DUP ;
+                     DUG 2 ;
+                     CAR ;
+                     CAR ;
+                     CAR ;
+                     SENDER ;
+                     COMPARE ;
+                     EQ ;
+                     IF { PUSH bool True } { SWAP ; DUP ; DUG 2 ; GET 3 ; CAR ; SENDER ; MEM } ;
+                     IF {} { PUSH string "PM_ONLY_MODS" ; FAILWITH } ;
+                     SWAP ;
+                     UNPAIR ;
+                     UNPAIR ;
+                     CAR ;
+                     DIG 3 ;
+                     SWAP ;
+                     PAIR ;
+                     PAIR ;
+                     PAIR }
+                   { IF_LEFT
+                       { SWAP ;
+                         DUP ;
+                         DUG 2 ;
+                         CAR ;
+                         CAR ;
+                         CAR ;
+                         SENDER ;
+                         COMPARE ;
+                         EQ ;
+                         IF { PUSH bool True } { SWAP ; DUP ; DUG 2 ; GET 3 ; CAR ; SENDER ; MEM } ;
+                         IF {} { PUSH string "PM_ONLY_MODS" ; FAILWITH } ;
+                         SWAP ;
+                         UNPAIR ;
+                         UNPAIR ;
+                         SWAP ;
+                         CDR ;
+                         DIG 3 ;
+                         PAIR ;
+                         SWAP ;
+                         PAIR ;
+                         PAIR }
+                       { SWAP ;
+                         DUP ;
+                         DUG 2 ;
+                         CAR ;
+                         CAR ;
+                         CAR ;
+                         SENDER ;
+                         COMPARE ;
+                         EQ ;
+                         IF { PUSH bool True } { SWAP ; DUP ; DUG 2 ; GET 3 ; CAR ; SENDER ; MEM } ;
+                         IF {} { PUSH string "PM_ONLY_MODS" ; FAILWITH } ;
+                         UPDATE 8 } } } } ;
+         NIL operation ;
+         PAIR } ;
+  view "get_admin" unit address { CDR ; CAR ; CAR ; CAR } ;
+  view "get_baking_reward_collector" unit address { CDR ; CAR ; CAR ; CDR } ;
+  view "get_delegate" unit key_hash { CDR ; CAR ; GET 3 } ;
+  view "get_treasury" unit address { CDR ; GET 8 } ;
+  view "is_mod"
+       address
+       bool
+       { UNPAIR ;
+         SWAP ;
+         DUP ;
+         DUG 2 ;
+         GET 3 ;
+         CAR ;
+         SWAP ;
+         DUP ;
+         DUG 2 ;
+         MEM ;
+         DIG 2 ;
+         CAR ;
+         CAR ;
+         CAR ;
+         DIG 2 ;
+         COMPARE ;
+         EQ ;
+         IF { DROP ; PUSH bool True } {} } ;
+  view "is_pausable" unit bool { CDR ; GET 3 ; CDR } ;
+  view "is_paused" unit bool { CDR ; GET 5 } }

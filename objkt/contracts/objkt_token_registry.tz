@@ -1,0 +1,430 @@
+{ parameter
+    (or (or (or (pair %add_collection
+                   (address %fa2)
+                   (pair %override (option %beneficiary_override address) (option %fee_override nat)))
+                (pair %add_fa12
+                   (address %fa12)
+                   (pair %override (option %beneficiary_override address) (option %fee_override nat))))
+            (or (pair %add_fa2
+                   (pair %fa2 address nat)
+                   (pair %override (option %beneficiary_override address) (option %fee_override nat)))
+                (or (unit %default) (unit %delegate))))
+        (or (or (address %remove_collection)
+                (or (address %remove_fa12) (pair %remove_fa2 address nat)))
+            (or (nat %update_default_management_fee)
+                (or (address %update_permission_module)
+                    (pair %update_tez_override
+                       (option %beneficiary_override address)
+                       (option %fee_override nat)))))) ;
+  storage
+    (pair (pair (big_map %collections
+                   address
+                   (pair (option %beneficiary_override address) (option %fee_override nat)))
+                (nat %default_management_fee)
+                (big_map %fa12
+                   address
+                   (pair (option %beneficiary_override address) (option %fee_override nat))))
+          (pair (big_map %fa2
+                   (pair address nat)
+                   (pair (option %beneficiary_override address) (option %fee_override nat)))
+                (big_map %metadata string bytes))
+          (address %permission_module)
+          (pair %tez_override
+             (option %beneficiary_override address)
+             (option %fee_override nat))) ;
+  code { CAST (pair (or (or (or (pair address (pair (option address) (option nat)))
+                                (pair address (pair (option address) (option nat))))
+                            (or (pair (pair address nat) (pair (option address) (option nat))) (or unit unit)))
+                        (or (or address (or address (pair address nat)))
+                            (or nat (or address (pair (option address) (option nat))))))
+                    (pair (pair (big_map address (pair (option address) (option nat)))
+                                (pair nat (big_map address (pair (option address) (option nat)))))
+                          (pair (pair (big_map (pair address nat) (pair (option address) (option nat)))
+                                      (big_map string bytes))
+                                (pair address (pair (option address) (option nat)))))) ;
+         UNPAIR ;
+         IF_LEFT
+           { IF_LEFT
+               { IF_LEFT
+                   { SWAP ;
+                     DUP ;
+                     DUG 2 ;
+                     GET 5 ;
+                     SENDER ;
+                     VIEW "is_mod" bool ;
+                     IF_NONE { PUSH int 157 ; FAILWITH } {} ;
+                     IF {} { PUSH string "PMI_ONLY_MODS" ; FAILWITH } ;
+                     SWAP ;
+                     UNPAIR ;
+                     UNPAIR ;
+                     DUP 4 ;
+                     CDR ;
+                     SOME ;
+                     DIG 4 ;
+                     CAR ;
+                     UPDATE ;
+                     PAIR ;
+                     PAIR }
+                   { SWAP ;
+                     DUP ;
+                     DUG 2 ;
+                     GET 5 ;
+                     SENDER ;
+                     VIEW "is_mod" bool ;
+                     IF_NONE { PUSH int 157 ; FAILWITH } {} ;
+                     IF {} { PUSH string "PMI_ONLY_MODS" ; FAILWITH } ;
+                     SWAP ;
+                     UNPAIR ;
+                     UNPAIR ;
+                     SWAP ;
+                     UNPAIR ;
+                     SWAP ;
+                     DUP 5 ;
+                     CDR ;
+                     SOME ;
+                     DIG 5 ;
+                     CAR ;
+                     UPDATE ;
+                     SWAP ;
+                     PAIR ;
+                     SWAP ;
+                     PAIR ;
+                     PAIR } ;
+                 NIL operation }
+               { IF_LEFT
+                   { SWAP ;
+                     DUP ;
+                     DUG 2 ;
+                     GET 5 ;
+                     SENDER ;
+                     VIEW "is_mod" bool ;
+                     IF_NONE { PUSH int 157 ; FAILWITH } {} ;
+                     IF {} { PUSH string "PMI_ONLY_MODS" ; FAILWITH } ;
+                     SWAP ;
+                     UNPAIR ;
+                     SWAP ;
+                     UNPAIR ;
+                     UNPAIR ;
+                     DUP 5 ;
+                     CDR ;
+                     SOME ;
+                     DIG 5 ;
+                     CAR ;
+                     UPDATE ;
+                     PAIR ;
+                     PAIR ;
+                     SWAP ;
+                     PAIR ;
+                     NIL operation }
+                   { IF_LEFT
+                       { DROP ;
+                         DUP ;
+                         GET 5 ;
+                         NIL operation ;
+                         SWAP ;
+                         UNIT ;
+                         VIEW "get_baking_reward_collector" address ;
+                         IF_NONE { PUSH int 177 ; FAILWITH } {} ;
+                         CONTRACT unit ;
+                         IF_NONE { PUSH int 208 ; FAILWITH } {} ;
+                         AMOUNT ;
+                         UNIT ;
+                         TRANSFER_TOKENS ;
+                         CONS }
+                       { DROP ;
+                         DUP ;
+                         GET 5 ;
+                         NIL operation ;
+                         SWAP ;
+                         UNIT ;
+                         VIEW "get_delegate" key_hash ;
+                         IF_NONE { PUSH int 186 ; FAILWITH } {} ;
+                         SOME ;
+                         SET_DELEGATE ;
+                         CONS } } } }
+           { IF_LEFT
+               { IF_LEFT
+                   { SWAP ;
+                     DUP ;
+                     DUG 2 ;
+                     GET 5 ;
+                     SENDER ;
+                     VIEW "is_mod" bool ;
+                     IF_NONE { PUSH int 157 ; FAILWITH } {} ;
+                     IF {} { PUSH string "PMI_ONLY_MODS" ; FAILWITH } ;
+                     SWAP ;
+                     UNPAIR ;
+                     UNPAIR ;
+                     NONE (pair (option address) (option nat)) ;
+                     DIG 4 ;
+                     UPDATE ;
+                     PAIR ;
+                     PAIR }
+                   { IF_LEFT
+                       { SWAP ;
+                         DUP ;
+                         DUG 2 ;
+                         GET 5 ;
+                         SENDER ;
+                         VIEW "is_mod" bool ;
+                         IF_NONE { PUSH int 157 ; FAILWITH } {} ;
+                         IF {} { PUSH string "PMI_ONLY_MODS" ; FAILWITH } ;
+                         SWAP ;
+                         UNPAIR ;
+                         UNPAIR ;
+                         SWAP ;
+                         UNPAIR ;
+                         SWAP ;
+                         NONE (pair (option address) (option nat)) ;
+                         DIG 5 ;
+                         UPDATE ;
+                         SWAP ;
+                         PAIR ;
+                         SWAP ;
+                         PAIR ;
+                         PAIR }
+                       { SWAP ;
+                         DUP ;
+                         DUG 2 ;
+                         GET 5 ;
+                         SENDER ;
+                         VIEW "is_mod" bool ;
+                         IF_NONE { PUSH int 157 ; FAILWITH } {} ;
+                         IF {} { PUSH string "PMI_ONLY_MODS" ; FAILWITH } ;
+                         SWAP ;
+                         UNPAIR ;
+                         SWAP ;
+                         UNPAIR ;
+                         UNPAIR ;
+                         NONE (pair (option address) (option nat)) ;
+                         DIG 5 ;
+                         UPDATE ;
+                         PAIR ;
+                         PAIR ;
+                         SWAP ;
+                         PAIR } } }
+               { IF_LEFT
+                   { SWAP ;
+                     DUP ;
+                     DUG 2 ;
+                     GET 5 ;
+                     SENDER ;
+                     VIEW "is_mod" bool ;
+                     IF_NONE { PUSH int 157 ; FAILWITH } {} ;
+                     IF {} { PUSH string "PMI_ONLY_MODS" ; FAILWITH } ;
+                     SWAP ;
+                     UNPAIR ;
+                     UNPAIR ;
+                     SWAP ;
+                     CDR ;
+                     DIG 3 ;
+                     PAIR ;
+                     SWAP ;
+                     PAIR ;
+                     PAIR }
+                   { IF_LEFT
+                       { SWAP ;
+                         DUP ;
+                         DUG 2 ;
+                         GET 5 ;
+                         UNIT ;
+                         VIEW "get_admin" address ;
+                         IF_NONE { PUSH int 148 ; FAILWITH } {} ;
+                         SENDER ;
+                         COMPARE ;
+                         EQ ;
+                         IF {} { PUSH string "PMI_ONLY_ADMIN" ; FAILWITH } ;
+                         UPDATE 5 }
+                       { SWAP ;
+                         DUP ;
+                         DUG 2 ;
+                         GET 5 ;
+                         SENDER ;
+                         VIEW "is_mod" bool ;
+                         IF_NONE { PUSH int 157 ; FAILWITH } {} ;
+                         IF {} { PUSH string "PMI_ONLY_MODS" ; FAILWITH } ;
+                         UPDATE 6 } } } ;
+             NIL operation } ;
+         PAIR } ;
+  view "get_default_management_fee" unit nat { CDR ; CAR ; GET 3 } ;
+  view "get_override"
+       (pair (or %payment_medium
+                (address %fa12)
+                (or (pair %fa2 (address %address) (nat %token_id)) (unit %tez)))
+             (address %token_fa2))
+       (pair (option %beneficiary_override address) (option %fee_override nat))
+       { UNPAIR ;
+         PUSH (pair (option address) (option nat)) (Pair None (Some 10000)) ;
+         SWAP ;
+         DUP ;
+         DUG 2 ;
+         CAR ;
+         IF_LEFT
+           { DUP 4 ;
+             CAR ;
+             GET 4 ;
+             SWAP ;
+             DUP ;
+             DUG 2 ;
+             GET ;
+             IF_NONE { PUSH int 163 ; FAILWITH } {} ;
+             DUP ;
+             CDR ;
+             IF_NONE
+               {}
+               { DROP ;
+                 DUP 3 ;
+                 SWAP ;
+                 DUP ;
+                 DUG 2 ;
+                 CDR ;
+                 IF_NONE { PUSH int 168 ; FAILWITH } {} ;
+                 DIG 4 ;
+                 CDR ;
+                 IF_NONE { PUSH int 167 ; FAILWITH } {} ;
+                 DUP ;
+                 DUP 3 ;
+                 COMPARE ;
+                 LE ;
+                 IF { DROP } { SWAP ; DROP } ;
+                 SOME ;
+                 UPDATE 2 ;
+                 DUG 2 } ;
+             DUP ;
+             CAR ;
+             IF_NONE { DROP 2 } { DROP ; SWAP ; DROP ; CAR ; UPDATE 1 } }
+           { IF_LEFT
+               { DUP 4 ;
+                 GET 3 ;
+                 CAR ;
+                 SWAP ;
+                 DUP ;
+                 CDR ;
+                 SWAP ;
+                 DUP ;
+                 DUG 3 ;
+                 CAR ;
+                 PAIR ;
+                 GET ;
+                 IF_NONE { PUSH int 149 ; FAILWITH } {} ;
+                 DUP ;
+                 CDR ;
+                 IF_NONE
+                   {}
+                   { DROP ;
+                     DUP 3 ;
+                     SWAP ;
+                     DUP ;
+                     DUG 2 ;
+                     CDR ;
+                     IF_NONE { PUSH int 155 ; FAILWITH } {} ;
+                     DIG 4 ;
+                     CDR ;
+                     IF_NONE { PUSH int 154 ; FAILWITH } {} ;
+                     DUP ;
+                     DUP 3 ;
+                     COMPARE ;
+                     LE ;
+                     IF { DROP } { SWAP ; DROP } ;
+                     SOME ;
+                     UPDATE 2 ;
+                     DUG 2 } ;
+                 DUP ;
+                 CAR ;
+                 IF_NONE { DROP 2 } { DROP ; SWAP ; DROP ; CAR ; UPDATE 1 } }
+               { DUP 4 ;
+                 GET 6 ;
+                 DUP ;
+                 CDR ;
+                 IF_NONE
+                   {}
+                   { DROP ;
+                     DUP 3 ;
+                     SWAP ;
+                     DUP ;
+                     DUG 2 ;
+                     CDR ;
+                     IF_NONE { PUSH int 181 ; FAILWITH } {} ;
+                     DIG 4 ;
+                     CDR ;
+                     IF_NONE { PUSH int 180 ; FAILWITH } {} ;
+                     DUP ;
+                     DUP 3 ;
+                     COMPARE ;
+                     LE ;
+                     IF { DROP } { SWAP ; DROP } ;
+                     SOME ;
+                     UPDATE 2 ;
+                     DUG 2 } ;
+                 DUP ;
+                 CAR ;
+                 IF_NONE { DROP 2 } { DROP ; SWAP ; DROP ; CAR ; UPDATE 1 } } } ;
+         DUP 3 ;
+         CAR ;
+         CAR ;
+         DUP 3 ;
+         CDR ;
+         MEM ;
+         IF { DIG 2 ;
+              CAR ;
+              CAR ;
+              DIG 2 ;
+              CDR ;
+              GET ;
+              IF_NONE { PUSH int 191 ; FAILWITH } {} ;
+              DUP ;
+              CDR ;
+              IF_NONE
+                {}
+                { DROP ;
+                  SWAP ;
+                  DUP ;
+                  DUG 2 ;
+                  SWAP ;
+                  DUP ;
+                  DUG 2 ;
+                  CDR ;
+                  IF_NONE { PUSH int 196 ; FAILWITH } {} ;
+                  DIG 3 ;
+                  CDR ;
+                  IF_NONE { PUSH int 195 ; FAILWITH } {} ;
+                  DUP ;
+                  DUP 3 ;
+                  COMPARE ;
+                  LE ;
+                  IF { DROP } { SWAP ; DROP } ;
+                  SOME ;
+                  UPDATE 2 ;
+                  SWAP } ;
+              DUP ;
+              CAR ;
+              IF_NONE { DROP } { DROP ; CAR ; UPDATE 1 } }
+            { SWAP ; DROP ; SWAP ; DROP } ;
+         DUP ;
+         CDR ;
+         IF_NONE { PUSH int 205 ; FAILWITH } {} ;
+         PUSH nat 10000 ;
+         SWAP ;
+         COMPARE ;
+         GE ;
+         IF { NONE nat ; UPDATE 2 } {} } ;
+  view "verify_is_registered"
+       (or (address %fa12) (or (pair %fa2 (address %address) (nat %token_id)) (unit %tez)))
+       unit
+       { UNPAIR ;
+         IF_LEFT
+           { SWAP ;
+             CAR ;
+             GET 4 ;
+             SWAP ;
+             MEM ;
+             IF {} { PUSH string "TR_NOT_REGISTERED" ; FAILWITH } }
+           { IF_LEFT
+               { SWAP ;
+                 GET 3 ;
+                 CAR ;
+                 SWAP ;
+                 MEM ;
+                 IF {} { PUSH string "TR_NOT_REGISTERED" ; FAILWITH } }
+               { DROP 2 } } ;
+         UNIT } }

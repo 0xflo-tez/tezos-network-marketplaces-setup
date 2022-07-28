@@ -1,0 +1,533 @@
+{ parameter
+    (or (or (or (pair %ask
+                   (pair %token (address %address) (nat %token_id))
+                   (or %currency
+                      (address %fa12)
+                      (or (pair %fa2 (address %address) (nat %token_id)) (unit %tez)))
+                   (nat %amount)
+                   (nat %editions)
+                   (list %shares (pair (nat %amount) (address %recipient)))
+                   (option %expiry_time timestamp)
+                   (option %target address))
+                (or (pair %fulfill_ask (nat %ask_id) (option %proxy address))
+                    (pair %fulfill_offer (nat %offer_id) (option %token_id nat))))
+            (or (pair %offer
+                   (pair %token (address %address) (option %token_id nat))
+                   (or %currency
+                      (address %fa12)
+                      (or (pair %fa2 (address %address) (nat %token_id)) (unit %tez)))
+                   (nat %amount)
+                   (list %shares (pair (nat %amount) (address %recipient)))
+                   (option %expiry_time timestamp)
+                   (option %target address)
+                   (option %proxy address))
+                (or (nat %retract_ask) (nat %retract_offer))))
+        (or (or (or (unit %default) (unit %delegate))
+                (or (unit %lock_upgradablity) (unit %toggle_pause)))
+            (or (or (pair %update_contract_metadata (string %key) (bytes %value))
+                    (address %update_permission_module))
+                (or (address %update_token_registry)
+                    (pair %upgrade
+                       (or %entry_point
+                          (or (nat %ask) (or (nat %fulfill_ask) (nat %fulfill_offer)))
+                          (or (nat %offer) (or (nat %retract_ask) (nat %retract_offer))))
+                       (lambda %new_lambda
+                          (pair (or (or (pair %ask
+                                           (pair %token (address %address) (nat %token_id))
+                                           (or %currency
+                                              (address %fa12)
+                                              (or (pair %fa2 (address %address) (nat %token_id)) (unit %tez)))
+                                           (nat %amount)
+                                           (nat %editions)
+                                           (list %shares (pair (nat %amount) (address %recipient)))
+                                           (option %expiry_time timestamp)
+                                           (option %target address))
+                                        (or (pair %fulfill_ask (nat %ask_id) (option %proxy address))
+                                            (pair %fulfill_offer (nat %offer_id) (option %token_id nat))))
+                                    (or (pair %offer
+                                           (pair %token (address %address) (option %token_id nat))
+                                           (or %currency
+                                              (address %fa12)
+                                              (or (pair %fa2 (address %address) (nat %token_id)) (unit %tez)))
+                                           (nat %amount)
+                                           (list %shares (pair (nat %amount) (address %recipient)))
+                                           (option %expiry_time timestamp)
+                                           (option %target address)
+                                           (option %proxy address))
+                                        (or (nat %retract_ask) (nat %retract_offer))))
+                                (pair (pair (big_map %asks
+                                               nat
+                                               (pair (address %creator)
+                                                     (pair %token (address %address) (nat %token_id))
+                                                     (or %currency
+                                                        (address %fa12)
+                                                        (or (pair %fa2 (address %address) (nat %token_id)) (unit %tez)))
+                                                     (nat %amount)
+                                                     (nat %editions)
+                                                     (list %shares (pair (nat %amount) (address %recipient)))
+                                                     (option %expiry_time timestamp)
+                                                     (option %target address)))
+                                            (big_map %metadata string bytes))
+                                      (nat %next_ask_id)
+                                      (nat %next_offer_id))
+                                (pair (big_map %offers
+                                         nat
+                                         (pair (address %creator)
+                                               (pair %token (address %address) (option %token_id nat))
+                                               (or %currency
+                                                  (address %fa12)
+                                                  (or (pair %fa2 (address %address) (nat %token_id)) (unit %tez)))
+                                               (nat %amount)
+                                               (list %shares (pair (nat %amount) (address %recipient)))
+                                               (option %expiry_time timestamp)
+                                               (option %target address)))
+                                      (bool %paused))
+                                (address %permission_module)
+                                (address %token_registry)
+                                (bool %upgradable))
+                          (pair (list operation)
+                                (pair (pair (big_map %asks
+                                               nat
+                                               (pair (address %creator)
+                                                     (pair %token (address %address) (nat %token_id))
+                                                     (or %currency
+                                                        (address %fa12)
+                                                        (or (pair %fa2 (address %address) (nat %token_id)) (unit %tez)))
+                                                     (nat %amount)
+                                                     (nat %editions)
+                                                     (list %shares (pair (nat %amount) (address %recipient)))
+                                                     (option %expiry_time timestamp)
+                                                     (option %target address)))
+                                            (big_map %metadata string bytes))
+                                      (nat %next_ask_id)
+                                      (nat %next_offer_id))
+                                (pair (big_map %offers
+                                         nat
+                                         (pair (address %creator)
+                                               (pair %token (address %address) (option %token_id nat))
+                                               (or %currency
+                                                  (address %fa12)
+                                                  (or (pair %fa2 (address %address) (nat %token_id)) (unit %tez)))
+                                               (nat %amount)
+                                               (list %shares (pair (nat %amount) (address %recipient)))
+                                               (option %expiry_time timestamp)
+                                               (option %target address)))
+                                      (bool %paused))
+                                (address %permission_module)
+                                (address %token_registry)
+                                (bool %upgradable)))))))) ;
+  storage
+    (pair (pair (pair (pair (big_map %asks
+                               nat
+                               (pair (address %creator)
+                                     (pair %token (address %address) (nat %token_id))
+                                     (or %currency
+                                        (address %fa12)
+                                        (or (pair %fa2 (address %address) (nat %token_id)) (unit %tez)))
+                                     (nat %amount)
+                                     (nat %editions)
+                                     (list %shares (pair (nat %amount) (address %recipient)))
+                                     (option %expiry_time timestamp)
+                                     (option %target address)))
+                            (big_map %metadata string bytes))
+                      (nat %next_ask_id)
+                      (nat %next_offer_id))
+                (pair (big_map %offers
+                         nat
+                         (pair (address %creator)
+                               (pair %token (address %address) (option %token_id nat))
+                               (or %currency
+                                  (address %fa12)
+                                  (or (pair %fa2 (address %address) (nat %token_id)) (unit %tez)))
+                               (nat %amount)
+                               (list %shares (pair (nat %amount) (address %recipient)))
+                               (option %expiry_time timestamp)
+                               (option %target address)))
+                      (bool %paused))
+                (address %permission_module)
+                (address %token_registry)
+                (bool %upgradable))
+          (big_map
+             nat
+             (lambda
+                (pair (or (or (pair (pair address nat)
+                                    (or address (or (pair address nat) unit))
+                                    nat
+                                    nat
+                                    (list (pair nat address))
+                                    (option timestamp)
+                                    (option address))
+                              (or (pair nat (option address)) (pair nat (option nat))))
+                          (or (pair (pair address (option nat))
+                                    (or address (or (pair address nat) unit))
+                                    nat
+                                    (list (pair nat address))
+                                    (option timestamp)
+                                    (option address)
+                                    (option address))
+                              (or nat nat)))
+                      (pair (pair (big_map
+                                     nat
+                                     (pair address
+                                           (pair address nat)
+                                           (or address (or (pair address nat) unit))
+                                           nat
+                                           nat
+                                           (list (pair nat address))
+                                           (option timestamp)
+                                           (option address)))
+                                  (big_map string bytes))
+                            nat
+                            nat)
+                      (pair (big_map
+                               nat
+                               (pair address
+                                     (pair address (option nat))
+                                     (or address (or (pair address nat) unit))
+                                     nat
+                                     (list (pair nat address))
+                                     (option timestamp)
+                                     (option address)))
+                            bool)
+                      address
+                      address
+                      bool)
+                (pair (list operation)
+                      (pair (pair (big_map
+                                     nat
+                                     (pair address
+                                           (pair address nat)
+                                           (or address (or (pair address nat) unit))
+                                           nat
+                                           nat
+                                           (list (pair nat address))
+                                           (option timestamp)
+                                           (option address)))
+                                  (big_map string bytes))
+                            nat
+                            nat)
+                      (pair (big_map
+                               nat
+                               (pair address
+                                     (pair address (option nat))
+                                     (or address (or (pair address nat) unit))
+                                     nat
+                                     (list (pair nat address))
+                                     (option timestamp)
+                                     (option address)))
+                            bool)
+                      address
+                      address
+                      bool)))) ;
+  code { CAST (pair (or (or (or (pair (pair address nat)
+                                      (pair (or address (or (pair address nat) unit))
+                                            (pair nat
+                                                  (pair nat (pair (list (pair nat address)) (pair (option timestamp) (option address)))))))
+                                (or (pair nat (option address)) (pair nat (option nat))))
+                            (or (pair (pair address (option nat))
+                                      (pair (or address (or (pair address nat) unit))
+                                            (pair nat
+                                                  (pair (list (pair nat address))
+                                                        (pair (option timestamp) (pair (option address) (option address)))))))
+                                (or nat nat)))
+                        (or (or (or unit unit) (or unit unit))
+                            (or (or (pair string bytes) address)
+                                (or address
+                                    (pair (or (or nat (or nat nat)) (or nat (or nat nat)))
+                                          (lambda
+                                             (pair (or (or (pair (pair address nat)
+                                                                 (pair (or address (or (pair address nat) unit))
+                                                                       (pair nat
+                                                                             (pair nat (pair (list (pair nat address)) (pair (option timestamp) (option address)))))))
+                                                           (or (pair nat (option address)) (pair nat (option nat))))
+                                                       (or (pair (pair address (option nat))
+                                                                 (pair (or address (or (pair address nat) unit))
+                                                                       (pair nat
+                                                                             (pair (list (pair nat address))
+                                                                                   (pair (option timestamp) (pair (option address) (option address)))))))
+                                                           (or nat nat)))
+                                                   (pair (pair (pair (big_map
+                                                                        nat
+                                                                        (pair address
+                                                                              (pair (pair address nat)
+                                                                                    (pair (or address (or (pair address nat) unit))
+                                                                                          (pair nat
+                                                                                                (pair nat (pair (list (pair nat address)) (pair (option timestamp) (option address)))))))))
+                                                                     (big_map string bytes))
+                                                               (pair nat nat))
+                                                         (pair (pair (big_map
+                                                                        nat
+                                                                        (pair address
+                                                                              (pair (pair address (option nat))
+                                                                                    (pair (or address (or (pair address nat) unit))
+                                                                                          (pair nat (pair (list (pair nat address)) (pair (option timestamp) (option address))))))))
+                                                                     bool)
+                                                               (pair address (pair address bool)))))
+                                             (pair (list operation)
+                                                   (pair (pair (pair (big_map
+                                                                        nat
+                                                                        (pair address
+                                                                              (pair (pair address nat)
+                                                                                    (pair (or address (or (pair address nat) unit))
+                                                                                          (pair nat
+                                                                                                (pair nat (pair (list (pair nat address)) (pair (option timestamp) (option address)))))))))
+                                                                     (big_map string bytes))
+                                                               (pair nat nat))
+                                                         (pair (pair (big_map
+                                                                        nat
+                                                                        (pair address
+                                                                              (pair (pair address (option nat))
+                                                                                    (pair (or address (or (pair address nat) unit))
+                                                                                          (pair nat (pair (list (pair nat address)) (pair (option timestamp) (option address))))))))
+                                                                     bool)
+                                                               (pair address (pair address bool)))))))))))
+                    (pair (pair (pair (pair (big_map
+                                               nat
+                                               (pair address
+                                                     (pair (pair address nat)
+                                                           (pair (or address (or (pair address nat) unit))
+                                                                 (pair nat
+                                                                       (pair nat (pair (list (pair nat address)) (pair (option timestamp) (option address)))))))))
+                                            (big_map string bytes))
+                                      (pair nat nat))
+                                (pair (pair (big_map
+                                               nat
+                                               (pair address
+                                                     (pair (pair address (option nat))
+                                                           (pair (or address (or (pair address nat) unit))
+                                                                 (pair nat (pair (list (pair nat address)) (pair (option timestamp) (option address))))))))
+                                            bool)
+                                      (pair address (pair address bool))))
+                          (big_map
+                             nat
+                             (lambda
+                                (pair (or (or (pair (pair address nat)
+                                                    (pair (or address (or (pair address nat) unit))
+                                                          (pair nat
+                                                                (pair nat (pair (list (pair nat address)) (pair (option timestamp) (option address)))))))
+                                              (or (pair nat (option address)) (pair nat (option nat))))
+                                          (or (pair (pair address (option nat))
+                                                    (pair (or address (or (pair address nat) unit))
+                                                          (pair nat
+                                                                (pair (list (pair nat address))
+                                                                      (pair (option timestamp) (pair (option address) (option address)))))))
+                                              (or nat nat)))
+                                      (pair (pair (pair (big_map
+                                                           nat
+                                                           (pair address
+                                                                 (pair (pair address nat)
+                                                                       (pair (or address (or (pair address nat) unit))
+                                                                             (pair nat
+                                                                                   (pair nat (pair (list (pair nat address)) (pair (option timestamp) (option address)))))))))
+                                                        (big_map string bytes))
+                                                  (pair nat nat))
+                                            (pair (pair (big_map
+                                                           nat
+                                                           (pair address
+                                                                 (pair (pair address (option nat))
+                                                                       (pair (or address (or (pair address nat) unit))
+                                                                             (pair nat (pair (list (pair nat address)) (pair (option timestamp) (option address))))))))
+                                                        bool)
+                                                  (pair address (pair address bool)))))
+                                (pair (list operation)
+                                      (pair (pair (pair (big_map
+                                                           nat
+                                                           (pair address
+                                                                 (pair (pair address nat)
+                                                                       (pair (or address (or (pair address nat) unit))
+                                                                             (pair nat
+                                                                                   (pair nat (pair (list (pair nat address)) (pair (option timestamp) (option address)))))))))
+                                                        (big_map string bytes))
+                                                  (pair nat nat))
+                                            (pair (pair (big_map
+                                                           nat
+                                                           (pair address
+                                                                 (pair (pair address (option nat))
+                                                                       (pair (or address (or (pair address nat) unit))
+                                                                             (pair nat (pair (list (pair nat address)) (pair (option timestamp) (option address))))))))
+                                                        bool)
+                                                  (pair address (pair address bool))))))))) ;
+         UNPAIR 3 ;
+         IF_LEFT
+           { DUP ;
+             IF_LEFT
+               { IF_LEFT
+                   { DROP ; PUSH nat 0 }
+                   { IF_LEFT { DROP ; PUSH nat 1 } { DROP ; PUSH nat 2 } } }
+               { IF_LEFT
+                   { DROP ; PUSH nat 3 }
+                   { IF_LEFT { DROP ; PUSH nat 4 } { DROP ; PUSH nat 5 } } } ;
+             DUP 4 ;
+             SWAP ;
+             GET ;
+             IF_NONE { PUSH int -1 ; FAILWITH } {} ;
+             DUG 2 ;
+             PAIR ;
+             EXEC ;
+             UNPAIR }
+           { IF_LEFT
+               { IF_LEFT
+                   { IF_LEFT
+                       { DROP ;
+                         DUP ;
+                         GET 5 ;
+                         NIL operation ;
+                         SWAP ;
+                         UNIT ;
+                         VIEW "get_baking_reward_collector" address ;
+                         IF_NONE { PUSH int 177 ; FAILWITH } {} ;
+                         CONTRACT unit ;
+                         IF_NONE { PUSH int 208 ; FAILWITH } {} ;
+                         AMOUNT ;
+                         UNIT ;
+                         TRANSFER_TOKENS ;
+                         CONS }
+                       { DROP ;
+                         DUP ;
+                         GET 5 ;
+                         NIL operation ;
+                         SWAP ;
+                         UNIT ;
+                         VIEW "get_delegate" key_hash ;
+                         IF_NONE { PUSH int 186 ; FAILWITH } {} ;
+                         SOME ;
+                         SET_DELEGATE ;
+                         CONS } }
+                   { IF_LEFT
+                       { DROP ;
+                         DUP ;
+                         GET 5 ;
+                         UNIT ;
+                         VIEW "get_admin" address ;
+                         IF_NONE { PUSH int 148 ; FAILWITH } {} ;
+                         SENDER ;
+                         COMPARE ;
+                         EQ ;
+                         IF {} { PUSH string "PMI_ONLY_ADMIN" ; FAILWITH } ;
+                         PUSH bool False ;
+                         UPDATE 8 }
+                       { DROP ;
+                         DUP ;
+                         GET 5 ;
+                         UNIT ;
+                         VIEW "get_admin" address ;
+                         IF_NONE { PUSH int 148 ; FAILWITH } {} ;
+                         SENDER ;
+                         COMPARE ;
+                         EQ ;
+                         IF {} { PUSH string "PMI_ONLY_ADMIN" ; FAILWITH } ;
+                         DUP ;
+                         GET 3 ;
+                         CDR ;
+                         IF {}
+                            { DUP ;
+                              GET 5 ;
+                              UNIT ;
+                              VIEW "is_pausable" bool ;
+                              IF_NONE { PUSH int 201 ; FAILWITH } {} ;
+                              IF {} { PUSH string "UH_NOT_PAUSABLE" ; FAILWITH } } ;
+                         DUP ;
+                         UNPAIR ;
+                         SWAP ;
+                         UNPAIR ;
+                         CAR ;
+                         DIG 3 ;
+                         GET 3 ;
+                         CDR ;
+                         NOT ;
+                         SWAP ;
+                         PAIR ;
+                         PAIR ;
+                         SWAP ;
+                         PAIR } ;
+                     NIL operation } }
+               { IF_LEFT
+                   { IF_LEFT
+                       { SWAP ;
+                         DUP ;
+                         DUG 2 ;
+                         GET 5 ;
+                         UNIT ;
+                         VIEW "get_admin" address ;
+                         IF_NONE { PUSH int 148 ; FAILWITH } {} ;
+                         SENDER ;
+                         COMPARE ;
+                         EQ ;
+                         IF {} { PUSH string "PMI_ONLY_ADMIN" ; FAILWITH } ;
+                         SWAP ;
+                         UNPAIR ;
+                         UNPAIR ;
+                         UNPAIR ;
+                         SWAP ;
+                         DUP 5 ;
+                         CDR ;
+                         SOME ;
+                         DIG 5 ;
+                         CAR ;
+                         UPDATE ;
+                         SWAP ;
+                         PAIR ;
+                         PAIR ;
+                         PAIR }
+                       { SWAP ;
+                         DUP ;
+                         DUG 2 ;
+                         GET 5 ;
+                         UNIT ;
+                         VIEW "get_admin" address ;
+                         IF_NONE { PUSH int 148 ; FAILWITH } {} ;
+                         SENDER ;
+                         COMPARE ;
+                         EQ ;
+                         IF {} { PUSH string "PMI_ONLY_ADMIN" ; FAILWITH } ;
+                         UPDATE 5 } }
+                   { IF_LEFT
+                       { SWAP ;
+                         DUP ;
+                         DUG 2 ;
+                         GET 5 ;
+                         UNIT ;
+                         VIEW "get_admin" address ;
+                         IF_NONE { PUSH int 148 ; FAILWITH } {} ;
+                         SENDER ;
+                         COMPARE ;
+                         EQ ;
+                         IF {} { PUSH string "PMI_ONLY_ADMIN" ; FAILWITH } ;
+                         UPDATE 7 }
+                       { SWAP ;
+                         DUP ;
+                         DUG 2 ;
+                         GET 5 ;
+                         UNIT ;
+                         VIEW "get_admin" address ;
+                         IF_NONE { PUSH int 148 ; FAILWITH } {} ;
+                         SENDER ;
+                         COMPARE ;
+                         EQ ;
+                         IF {} { PUSH string "PMI_ONLY_ADMIN" ; FAILWITH } ;
+                         SWAP ;
+                         DUP ;
+                         DUG 2 ;
+                         GET 8 ;
+                         IF { PUSH string "UH_FROZEN" ; FAILWITH } {} ;
+                         DUP ;
+                         CAR ;
+                         IF_LEFT
+                           { IF_LEFT
+                               { DROP ; DIG 2 ; SWAP ; CDR ; SOME ; PUSH nat 0 ; UPDATE ; SWAP }
+                               { IF_LEFT
+                                   { DROP ; DIG 2 ; SWAP ; CDR ; SOME ; PUSH nat 1 ; UPDATE ; SWAP }
+                                   { DROP ; DIG 2 ; SWAP ; CDR ; SOME ; PUSH nat 2 ; UPDATE ; SWAP } } }
+                           { IF_LEFT
+                               { DROP ; DIG 2 ; SWAP ; CDR ; SOME ; PUSH nat 3 ; UPDATE ; SWAP }
+                               { IF_LEFT
+                                   { DROP ; DIG 2 ; SWAP ; CDR ; SOME ; PUSH nat 4 ; UPDATE ; SWAP }
+                                   { DROP ; DIG 2 ; SWAP ; CDR ; SOME ; PUSH nat 5 ; UPDATE ; SWAP } } } } } ;
+                 NIL operation } } ;
+         NIL operation ;
+         SWAP ;
+         ITER { CONS } ;
+         DUG 2 ;
+         PAIR ;
+         SWAP ;
+         PAIR } }
