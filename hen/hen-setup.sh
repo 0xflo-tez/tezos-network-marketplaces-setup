@@ -58,16 +58,11 @@ mkdir -p data
 # echo "--> Downloaded HEN HDAO"
 # echo
 
-echo "Deploying contracts ..."
+echo "Setting up HEN env..."
 echo "- Deploying HEN OBJKTS..."
 tezos-client -E $TARGET_NODE originate contract hen_objkts_$NETWORK transferring 0 from $ORIGINATOR_ALIAS running contracts/hen_objkts.tz --init '(Pair (Pair "'$ADMIN_ADDRESS'" (Pair 0 {})) (Pair (Pair {} {}) (Pair False {})))' --burn-cap 10 --force > data/hen_objkts_deploy.txt
 hen_objkts=$(sed -n '/^.*New[[:space:]]contract[[:space:]]\{1,\}\([-_[:alnum:]]\{1,\}\).*$/s//\1/p' data/hen_objkts_deploy.txt)
 echo "→ $hen_objkts"
-
-echo "- Deploying HEN Marketplace..."
-tezos-client -E $TARGET_NODE originate contract hen_marketplace_$NETWORK transferring 0 from $ORIGINATOR_ALIAS running contracts/hen_market.tz --init '(Pair (Pair 0 (Pair 0 "'$ADMIN_ADDRESS'")) (Pair {} (Pair "'$hen_objkts'" {})))' --burn-cap 10 --force > data/hen_market_deploy.txt
-hen_market=$(sed -n '/^.*New[[:space:]]contract[[:space:]]\{1,\}\([-_[:alnum:]]\{1,\}\).*$/s//\1/p' data/hen_market_deploy.txt)
-echo "→ $hen_market"
 
 echo "- Deploying HEN hDAO..."
 tezos-client -E $TARGET_NODE originate contract hen_hdao_$NETWORK transferring 0 from $ORIGINATOR_ALIAS running contracts/hen_hdao.tz --init '(Pair (Pair "'$ADMIN_ADDRESS'" (Pair 0 {})) (Pair (Pair {} {}) (Pair False {})))' --burn-cap 10 --force > data/hen_hdao_deploy.txt
@@ -84,16 +79,28 @@ tezos-client -E $TARGET_NODE originate contract hen_manager_$NETWORK transferrin
 hen_manager=$(sed -n '/^.*New[[:space:]]contract[[:space:]]\{1,\}\([-_[:alnum:]]\{1,\}\).*$/s//\1/p' data/hen_manager_deploy.txt)
 echo "→ $hen_manager"
 
-echo "Confuring contracts..."
-echo "- Configuring HEN Market..."
-tezos-client -E $TARGET_NODE transfer 0 from $ORIGINATOR_ALIAS to $hen_market --entrypoint "update_manager" --arg '"'$hen_manager'"' --burn-cap 10 > data/hen_market_configuration.txt
-echo "- Configuring HEN Objkts..."
-tezos-client -E $TARGET_NODE transfer 0 from $ORIGINATOR_ALIAS to $hen_objkts --entrypoint "set_administrator" --arg '"'$hen_manager'"' --burn-cap 10 > data/hen_objkts_configuration.txt
 echo "- Configuring HEN Curate..."
 tezos-client -E $TARGET_NODE transfer 0 from $ORIGINATOR_ALIAS to $hen_curate --entrypoint "configure" --arg 'Pair "'$hen_hdao'" "'$hen_manager'"' --burn-cap 10 > data/hen_curate_configuration.txt
+
+echo "- Configuring HEN Objkts..."
+tezos-client -E $TARGET_NODE transfer 0 from $ORIGINATOR_ALIAS to $hen_objkts --entrypoint "set_administrator" --arg '"'$hen_manager'"' --burn-cap 10 > data/hen_objkts_configuration.txt
+
 echo "- Configuring HEN hDAO..."
 tezos-client -E $TARGET_NODE transfer 0 from $ORIGINATOR_ALIAS to $hen_hdao --entrypoint "set_administrator" --arg '"'$hen_manager'"' --burn-cap 10 > data/hen_hdao_configuration.txt
-echo "Minting OBJKT..."
+
+echo "- Deploying HEN Marketplace..."
+tezos-client -E $TARGET_NODE originate contract hen_marketplace_$NETWORK transferring 0 from $ORIGINATOR_ALIAS running contracts/hen_market.tz --init '(Pair (Pair 0 (Pair 0 "'$ADMIN_ADDRESS'")) (Pair {} (Pair "'$hen_objkts'" {})))' --burn-cap 10 --force > data/hen_market_deploy.txt
+hen_market=$(sed -n '/^.*New[[:space:]]contract[[:space:]]\{1,\}\([-_[:alnum:]]\{1,\}\).*$/s//\1/p' data/hen_market_deploy.txt)
+echo "→ $hen_market"
+
+echo "- Minting OBJKT..."
 tezos-client -E $TARGET_NODE transfer 0 from $ORIGINATOR_ALIAS to $hen_manager --entrypoint "mint_OBJKT" --arg '(Pair  (Pair "'$ADMIN_ADDRESS'" 1000)  (Pair 0x697066733a2f2f516d504438474d4d444c326647376f4b4a6a3539705a6e674550435436324b6b746771755a456334526566764d7a 100))' --burn-cap 10 > data/hen_minting.txt
+
+echo "- Swapping OBJKT..."
+tezos-client -E $TARGET_NODE transfer 0 from $ORIGINATOR_ALIAS to $hen_manager --entrypoint "swap" --arg '(Pair 1 (Pair 763001 10000))' --burn-cap 10 > data/hen_swap.txt
+
+echo "- Collect OBJKT..."
+tezos-client -E $TARGET_NODE transfer 0.01 from bob to $hen_manager --entrypoint "collect" --arg '(Pair 1 348155)' --burn-cap 10 > data/hen_collect.txt
+
 echo
 echo "All done !"
