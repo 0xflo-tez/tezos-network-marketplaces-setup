@@ -39,7 +39,7 @@ tezos-client -E $MAINNET_NODE get contract code for KT1Pbj1uKjxZJLHyoQ2YUs4kukjv
 echo "--> Downloaded Token Registry"
 
 echo "- Downloading OBJKT Marketplace..."
-tezos-client -E $MAINNET_NODE get contract code for KT1WvzYHCNBvDSdwafTHv7nJ1dWmZ8GCYuuC > data/objkt_marketplace.tz
+tezos-client -E $MAINNET_NODE get contract code for KT1WvzYHCNBvDSdwafTHv7nJ1dWmZ8GCYuuC > data/objkt_marketplace_v2.tz
 echo "--> Downloaded OBJKT Marketplace"
 
 echo "- Downloading OBJKT FA2..."
@@ -65,7 +65,7 @@ token_registry_contract=$(sed -n '/^.*New[[:space:]]contract[[:space:]]\{1,\}\([
 echo $token_registry_contract
 
 echo "Deploying OBJKT Marketplace contract"
-tezos-client -E $TARGET_NODE originate contract objkt_marketplace_$NETWORK transferring 0 from $ORIGINATOR_ALIAS running data/objkt_marketplace.tz --init '(Pair (Pair (Pair (Pair {} {}) (Pair 1000000 1000000))
+tezos-client -E $TARGET_NODE originate contract objkt_marketplace_v2_$NETWORK transferring 0 from $ORIGINATOR_ALIAS running data/objkt_marketplace_v2.tz --init '(Pair (Pair (Pair (Pair {} {}) (Pair 1000000 1000000))
             (Pair (Pair {} False)
                   (Pair "'$permission_module_contract'"
                         (Pair "'$token_registry_contract'" True))))
