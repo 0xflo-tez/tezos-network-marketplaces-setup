@@ -89,7 +89,7 @@ echo "- Configuring HEN hDAO..."
 tezos-client -E $TARGET_NODE transfer 0 from $ORIGINATOR_ALIAS to $hen_hdao --entrypoint "set_administrator" --arg '"'$hen_manager'"' --burn-cap 10 > data/hen_hdao_configuration.txt
 
 echo "- Deploying HEN Marketplace..."
-tezos-client -E $TARGET_NODE originate contract hen_marketplace_$NETWORK transferring 0 from $ORIGINATOR_ALIAS running contracts/hen_market.tz --init '(Pair (Pair 0 (Pair 0 "'$ADMIN_ADDRESS'")) (Pair {} (Pair "'$hen_objkts'" {})))' --burn-cap 10 --force > data/hen_market_deploy.txt
+tezos-client -E $TARGET_NODE originate contract hen_marketplace_$NETWORK transferring 0 from $ORIGINATOR_ALIAS running contracts/hen_market.tz --init '(Pair (Pair 0 (Pair 10 "'$ADMIN_ADDRESS'")) (Pair {} (Pair "'$hen_objkts'" {})))' --burn-cap 10 --force > data/hen_market_deploy.txt
 hen_market=$(sed -n '/^.*New[[:space:]]contract[[:space:]]\{1,\}\([-_[:alnum:]]\{1,\}\).*$/s//\1/p' data/hen_market_deploy.txt)
 echo "→ $hen_market"
 
