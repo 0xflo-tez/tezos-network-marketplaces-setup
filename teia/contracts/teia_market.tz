@@ -1,0 +1,632 @@
+{ parameter
+    (or (or (or (unit %accept_manager) (or (address %add_fa2) (nat %cancel_swap)))
+            (or (nat %collect) (or (address %remove_fa2) (bool %set_pause_collects))))
+        (or (or (bool %set_pause_swaps)
+                (or (pair %swap
+                       (address %fa2)
+                       (pair (nat %objkt_id)
+                             (pair (nat %objkt_amount)
+                                   (pair (mutez %xtz_per_objkt) (pair (nat %royalties) (address %creator))))))
+                    (address %transfer_manager)))
+            (or (nat %update_fee)
+                (or (address %update_fee_recipient)
+                    (pair %update_metadata (string %key) (bytes %value)))))) ;
+  storage
+    (pair (pair (pair (big_map %allowed_fa2s address unit) (bool %collects_paused))
+                (pair (nat %counter) (pair (nat %fee) (address %fee_recipient))))
+          (pair (pair (address %manager) (big_map %metadata string bytes))
+                (pair (option %proposed_manager address)
+                      (pair (big_map %swaps
+                               nat
+                               (pair (address %issuer)
+                                     (pair (address %fa2)
+                                           (pair (nat %objkt_id)
+                                                 (pair (nat %objkt_amount)
+                                                       (pair (mutez %xtz_per_objkt) (pair (nat %royalties) (address %creator))))))))
+                            (bool %swaps_paused))))) ;
+  code { UNPAIR ;
+         IF_LEFT
+           { IF_LEFT
+               { IF_LEFT
+                   { DROP ;
+                     DUP ;
+                     GET 5 ;
+                     IF_NONE { PUSH string "MP_NO_NEW_MANAGER" ; FAILWITH } { DROP } ;
+                     DUP ;
+                     GET 5 ;
+                     IF_NONE { PUSH int 379 ; FAILWITH } {} ;
+                     SENDER ;
+                     COMPARE ;
+                     EQ ;
+                     IF {} { PUSH string "MP_NOT_PROPOSED_MANAGER" ; FAILWITH } ;
+                     PUSH mutez 0 ;
+                     AMOUNT ;
+                     COMPARE ;
+                     EQ ;
+                     IF {} { PUSH string "MP_TEZ_TRANSFER" ; FAILWITH } ;
+                     UNPAIR ;
+                     SWAP ;
+                     UNPAIR ;
+                     CDR ;
+                     SENDER ;
+                     PAIR ;
+                     PAIR ;
+                     SWAP ;
+                     PAIR ;
+                     NONE address ;
+                     UPDATE 5 ;
+                     NIL operation }
+                   { IF_LEFT
+                       { SWAP ;
+                         DUP ;
+                         DUG 2 ;
+                         GET 3 ;
+                         CAR ;
+                         SENDER ;
+                         COMPARE ;
+                         EQ ;
+                         IF {} { PUSH string "MP_NOT_MANAGER" ; FAILWITH } ;
+                         PUSH mutez 0 ;
+                         AMOUNT ;
+                         COMPARE ;
+                         EQ ;
+                         IF {} { PUSH string "MP_TEZ_TRANSFER" ; FAILWITH } ;
+                         SWAP ;
+                         UNPAIR ;
+                         UNPAIR ;
+                         UNPAIR ;
+                         PUSH (option unit) (Some Unit) ;
+                         DIG 5 ;
+                         UPDATE ;
+                         PAIR ;
+                         PAIR ;
+                         PAIR ;
+                         NIL operation }
+                       { PUSH mutez 0 ;
+                         AMOUNT ;
+                         COMPARE ;
+                         EQ ;
+                         IF {} { PUSH string "MP_TEZ_TRANSFER" ; FAILWITH } ;
+                         SWAP ;
+                         DUP ;
+                         DUG 2 ;
+                         GET 7 ;
+                         SWAP ;
+                         DUP ;
+                         DUG 2 ;
+                         MEM ;
+                         IF {} { PUSH string "MP_WRONG_SWAP_ID" ; FAILWITH } ;
+                         SWAP ;
+                         DUP ;
+                         DUG 2 ;
+                         GET 7 ;
+                         SWAP ;
+                         DUP ;
+                         DUG 2 ;
+                         GET ;
+                         IF_NONE { PUSH int 280 ; FAILWITH } {} ;
+                         DUP ;
+                         CAR ;
+                         SENDER ;
+                         COMPARE ;
+                         EQ ;
+                         IF {} { PUSH string "MP_NOT_SWAP_ISSUER" ; FAILWITH } ;
+                         DUP ;
+                         GET 7 ;
+                         PUSH nat 0 ;
+                         COMPARE ;
+                         LT ;
+                         IF {} { PUSH string "MP_SWAP_COLLECTED" ; FAILWITH } ;
+                         DUP ;
+                         GET 3 ;
+                         CONTRACT %transfer
+                           (list (pair (address %from_)
+                                       (list %txs (pair (address %to_) (pair (nat %token_id) (nat %amount)))))) ;
+                         IF_NONE { PUSH int 647 ; FAILWITH } {} ;
+                         NIL operation ;
+                         SWAP ;
+                         PUSH mutez 0 ;
+                         NIL (pair address (list (pair address (pair nat nat)))) ;
+                         NIL (pair address (pair nat nat)) ;
+                         DIG 5 ;
+                         DUP ;
+                         GET 7 ;
+                         SWAP ;
+                         GET 5 ;
+                         SENDER ;
+                         PAIR 3 ;
+                         CONS ;
+                         SELF_ADDRESS ;
+                         PAIR ;
+                         CONS ;
+                         TRANSFER_TOKENS ;
+                         CONS ;
+                         DIG 2 ;
+                         DUP ;
+                         GET 7 ;
+                         NONE (pair address (pair address (pair nat (pair nat (pair mutez (pair nat address)))))) ;
+                         DIG 4 ;
+                         UPDATE ;
+                         UPDATE 7 ;
+                         SWAP } } }
+               { IF_LEFT
+                   { SWAP ;
+                     DUP ;
+                     DUG 2 ;
+                     CAR ;
+                     CAR ;
+                     CDR ;
+                     IF { PUSH string "MP_COLLECTS_PAUSED" ; FAILWITH } {} ;
+                     SWAP ;
+                     DUP ;
+                     DUG 2 ;
+                     GET 7 ;
+                     SWAP ;
+                     DUP ;
+                     DUG 2 ;
+                     MEM ;
+                     IF {} { PUSH string "MP_WRONG_SWAP_ID" ; FAILWITH } ;
+                     SWAP ;
+                     DUP ;
+                     DUG 2 ;
+                     GET 7 ;
+                     SWAP ;
+                     DUP ;
+                     DUG 2 ;
+                     GET ;
+                     IF_NONE { PUSH int 217 ; FAILWITH } {} ;
+                     DUP ;
+                     CAR ;
+                     SENDER ;
+                     COMPARE ;
+                     NEQ ;
+                     IF {} { PUSH string "MP_IS_SWAP_ISSUER" ; FAILWITH } ;
+                     DUP ;
+                     GET 9 ;
+                     AMOUNT ;
+                     COMPARE ;
+                     EQ ;
+                     IF {} { PUSH string "MP_WRONG_TEZ_AMOUNT" ; FAILWITH } ;
+                     DUP ;
+                     GET 7 ;
+                     PUSH nat 0 ;
+                     COMPARE ;
+                     LT ;
+                     IF {} { PUSH string "MP_SWAP_COLLECTED" ; FAILWITH } ;
+                     DUP ;
+                     GET 9 ;
+                     PUSH mutez 0 ;
+                     COMPARE ;
+                     NEQ ;
+                     IF { PUSH nat 1000 ;
+                          SWAP ;
+                          DUP ;
+                          GET 11 ;
+                          SWAP ;
+                          DUP ;
+                          DUG 3 ;
+                          GET 9 ;
+                          MUL ;
+                          EDIV ;
+                          IF_NONE { PUSH int 230 ; FAILWITH } {} ;
+                          CAR ;
+                          DUP ;
+                          PUSH mutez 0 ;
+                          COMPARE ;
+                          LT ;
+                          IF { NIL operation ;
+                               DUP 3 ;
+                               GET 12 ;
+                               CONTRACT unit ;
+                               IF_NONE { PUSH int 235 ; FAILWITH } {} ;
+                               DUP 3 ;
+                               UNIT ;
+                               TRANSFER_TOKENS ;
+                               CONS }
+                             { NIL operation } ;
+                          PUSH nat 1000 ;
+                          DUP 6 ;
+                          CAR ;
+                          GET 5 ;
+                          DUP 5 ;
+                          GET 9 ;
+                          MUL ;
+                          EDIV ;
+                          IF_NONE { PUSH int 238 ; FAILWITH } {} ;
+                          CAR ;
+                          DUP ;
+                          PUSH mutez 0 ;
+                          COMPARE ;
+                          LT ;
+                          IF { SWAP ;
+                               DUP 6 ;
+                               CAR ;
+                               GET 6 ;
+                               CONTRACT unit ;
+                               IF_NONE { PUSH int 243 ; FAILWITH } {} ;
+                               DUP 3 ;
+                               UNIT ;
+                               TRANSFER_TOKENS ;
+                               CONS ;
+                               SWAP }
+                             {} ;
+                          SWAP ;
+                          DUP 4 ;
+                          CAR ;
+                          CONTRACT unit ;
+                          IF_NONE { PUSH int 246 ; FAILWITH } {} ;
+                          DIG 2 ;
+                          DIG 3 ;
+                          AMOUNT ;
+                          SUB_MUTEZ ;
+                          ASSERT_SOME ;
+                          SUB_MUTEZ ;
+                          ASSERT_SOME ;
+                          UNIT ;
+                          TRANSFER_TOKENS ;
+                          CONS }
+                        { NIL operation } ;
+                     SWAP ;
+                     DUP ;
+                     DUG 2 ;
+                     GET 3 ;
+                     CONTRACT %transfer
+                       (list (pair (address %from_)
+                                   (list %txs (pair (address %to_) (pair (nat %token_id) (nat %amount)))))) ;
+                     IF_NONE { PUSH int 647 ; FAILWITH } {} ;
+                     PUSH mutez 0 ;
+                     NIL (pair address (list (pair address (pair nat nat)))) ;
+                     NIL (pair address (pair nat nat)) ;
+                     PUSH nat 1 ;
+                     DUP 7 ;
+                     GET 5 ;
+                     SENDER ;
+                     PAIR 3 ;
+                     CONS ;
+                     SELF_ADDRESS ;
+                     PAIR ;
+                     CONS ;
+                     TRANSFER_TOKENS ;
+                     CONS ;
+                     DIG 3 ;
+                     DUP ;
+                     GET 7 ;
+                     DUP ;
+                     DIG 5 ;
+                     DUP ;
+                     DUG 2 ;
+                     GET ;
+                     IF_NONE { PUSH int 257 ; FAILWITH } {} ;
+                     PUSH nat 1 ;
+                     DIG 6 ;
+                     GET 7 ;
+                     SUB ;
+                     ISNAT ;
+                     IF_NONE { PUSH int 257 ; FAILWITH } {} ;
+                     UPDATE 7 ;
+                     SOME ;
+                     SWAP ;
+                     UPDATE ;
+                     UPDATE 7 ;
+                     SWAP }
+                   { IF_LEFT
+                       { SWAP ;
+                         DUP ;
+                         DUG 2 ;
+                         GET 3 ;
+                         CAR ;
+                         SENDER ;
+                         COMPARE ;
+                         EQ ;
+                         IF {} { PUSH string "MP_NOT_MANAGER" ; FAILWITH } ;
+                         PUSH mutez 0 ;
+                         AMOUNT ;
+                         COMPARE ;
+                         EQ ;
+                         IF {} { PUSH string "MP_TEZ_TRANSFER" ; FAILWITH } ;
+                         SWAP ;
+                         UNPAIR ;
+                         UNPAIR ;
+                         UNPAIR ;
+                         NONE unit ;
+                         DIG 5 ;
+                         UPDATE ;
+                         PAIR ;
+                         PAIR ;
+                         PAIR }
+                       { SWAP ;
+                         DUP ;
+                         DUG 2 ;
+                         GET 3 ;
+                         CAR ;
+                         SENDER ;
+                         COMPARE ;
+                         EQ ;
+                         IF {} { PUSH string "MP_NOT_MANAGER" ; FAILWITH } ;
+                         PUSH mutez 0 ;
+                         AMOUNT ;
+                         COMPARE ;
+                         EQ ;
+                         IF {} { PUSH string "MP_TEZ_TRANSFER" ; FAILWITH } ;
+                         SWAP ;
+                         UNPAIR ;
+                         UNPAIR ;
+                         CAR ;
+                         DIG 3 ;
+                         SWAP ;
+                         PAIR ;
+                         PAIR ;
+                         PAIR } ;
+                     NIL operation } } }
+           { IF_LEFT
+               { IF_LEFT
+                   { SWAP ;
+                     DUP ;
+                     DUG 2 ;
+                     GET 3 ;
+                     CAR ;
+                     SENDER ;
+                     COMPARE ;
+                     EQ ;
+                     IF {} { PUSH string "MP_NOT_MANAGER" ; FAILWITH } ;
+                     PUSH mutez 0 ;
+                     AMOUNT ;
+                     COMPARE ;
+                     EQ ;
+                     IF {} { PUSH string "MP_TEZ_TRANSFER" ; FAILWITH } ;
+                     UPDATE 8 ;
+                     NIL operation }
+                   { IF_LEFT
+                       { SWAP ;
+                         DUP ;
+                         DUG 2 ;
+                         GET 8 ;
+                         IF { PUSH string "MP_SWAPS_PAUSED" ; FAILWITH } {} ;
+                         PUSH mutez 0 ;
+                         AMOUNT ;
+                         COMPARE ;
+                         EQ ;
+                         IF {} { PUSH string "MP_TEZ_TRANSFER" ; FAILWITH } ;
+                         SWAP ;
+                         DUP ;
+                         DUG 2 ;
+                         CAR ;
+                         CAR ;
+                         CAR ;
+                         SWAP ;
+                         DUP ;
+                         DUG 2 ;
+                         CAR ;
+                         MEM ;
+                         IF {} { PUSH string "MP_FA2_NOT_ALLOWED" ; FAILWITH } ;
+                         DUP ;
+                         GET 5 ;
+                         PUSH nat 0 ;
+                         COMPARE ;
+                         LT ;
+                         IF {} { PUSH string "MP_NO_SWAPPED_EDITIONS" ; FAILWITH } ;
+                         DUP ;
+                         GET 9 ;
+                         PUSH nat 250 ;
+                         SWAP ;
+                         COMPARE ;
+                         LE ;
+                         IF {} { PUSH string "MP_WRONG_ROYALTIES" ; FAILWITH } ;
+                         DUP ;
+                         CAR ;
+                         CONTRACT %transfer
+                           (list (pair (address %from_)
+                                       (list %txs (pair (address %to_) (pair (nat %token_id) (nat %amount)))))) ;
+                         IF_NONE { PUSH int 647 ; FAILWITH } {} ;
+                         NIL operation ;
+                         SWAP ;
+                         PUSH mutez 0 ;
+                         NIL (pair address (list (pair address (pair nat nat)))) ;
+                         NIL (pair address (pair nat nat)) ;
+                         DIG 5 ;
+                         DUP ;
+                         GET 5 ;
+                         SWAP ;
+                         DUP ;
+                         DUG 7 ;
+                         GET 3 ;
+                         SELF_ADDRESS ;
+                         PAIR 3 ;
+                         CONS ;
+                         SENDER ;
+                         PAIR ;
+                         CONS ;
+                         TRANSFER_TOKENS ;
+                         CONS ;
+                         DUP 3 ;
+                         DUP ;
+                         GET 7 ;
+                         DIG 3 ;
+                         DUP ;
+                         GET 10 ;
+                         SWAP ;
+                         DUP ;
+                         GET 9 ;
+                         SWAP ;
+                         DUP ;
+                         GET 7 ;
+                         SWAP ;
+                         DUP ;
+                         GET 5 ;
+                         SWAP ;
+                         DUP ;
+                         GET 3 ;
+                         SWAP ;
+                         DUP ;
+                         DUG 9 ;
+                         CAR ;
+                         SENDER ;
+                         PAIR 7 ;
+                         DIG 4 ;
+                         DROP ;
+                         SOME ;
+                         DIG 4 ;
+                         CAR ;
+                         GET 3 ;
+                         UPDATE ;
+                         UPDATE 7 ;
+                         UNPAIR ;
+                         UNPAIR ;
+                         SWAP ;
+                         UNPAIR ;
+                         PUSH nat 1 ;
+                         ADD ;
+                         PAIR ;
+                         SWAP ;
+                         PAIR ;
+                         PAIR ;
+                         SWAP }
+                       { SWAP ;
+                         DUP ;
+                         DUG 2 ;
+                         GET 3 ;
+                         CAR ;
+                         SENDER ;
+                         COMPARE ;
+                         EQ ;
+                         IF {} { PUSH string "MP_NOT_MANAGER" ; FAILWITH } ;
+                         PUSH mutez 0 ;
+                         AMOUNT ;
+                         COMPARE ;
+                         EQ ;
+                         IF {} { PUSH string "MP_TEZ_TRANSFER" ; FAILWITH } ;
+                         SOME ;
+                         UPDATE 5 ;
+                         NIL operation } } }
+               { IF_LEFT
+                   { SWAP ;
+                     DUP ;
+                     DUG 2 ;
+                     GET 3 ;
+                     CAR ;
+                     SENDER ;
+                     COMPARE ;
+                     EQ ;
+                     IF {} { PUSH string "MP_NOT_MANAGER" ; FAILWITH } ;
+                     PUSH mutez 0 ;
+                     AMOUNT ;
+                     COMPARE ;
+                     EQ ;
+                     IF {} { PUSH string "MP_TEZ_TRANSFER" ; FAILWITH } ;
+                     DUP ;
+                     PUSH nat 250 ;
+                     SWAP ;
+                     COMPARE ;
+                     LE ;
+                     IF {} { PUSH string "MP_WRONG_FEES" ; FAILWITH } ;
+                     SWAP ;
+                     UNPAIR ;
+                     UNPAIR ;
+                     SWAP ;
+                     UNPAIR ;
+                     SWAP ;
+                     CDR ;
+                     DIG 4 ;
+                     PAIR ;
+                     SWAP ;
+                     PAIR ;
+                     SWAP ;
+                     PAIR ;
+                     PAIR }
+                   { IF_LEFT
+                       { SWAP ;
+                         DUP ;
+                         DUG 2 ;
+                         GET 3 ;
+                         CAR ;
+                         SENDER ;
+                         COMPARE ;
+                         EQ ;
+                         IF {} { PUSH string "MP_NOT_MANAGER" ; FAILWITH } ;
+                         PUSH mutez 0 ;
+                         AMOUNT ;
+                         COMPARE ;
+                         EQ ;
+                         IF {} { PUSH string "MP_TEZ_TRANSFER" ; FAILWITH } ;
+                         SWAP ;
+                         UNPAIR ;
+                         UNPAIR ;
+                         SWAP ;
+                         UNPAIR ;
+                         SWAP ;
+                         CAR ;
+                         DIG 4 ;
+                         SWAP ;
+                         PAIR ;
+                         SWAP ;
+                         PAIR ;
+                         SWAP ;
+                         PAIR ;
+                         PAIR }
+                       { SWAP ;
+                         DUP ;
+                         DUG 2 ;
+                         GET 3 ;
+                         CAR ;
+                         SENDER ;
+                         COMPARE ;
+                         EQ ;
+                         IF {} { PUSH string "MP_NOT_MANAGER" ; FAILWITH } ;
+                         PUSH mutez 0 ;
+                         AMOUNT ;
+                         COMPARE ;
+                         EQ ;
+                         IF {} { PUSH string "MP_TEZ_TRANSFER" ; FAILWITH } ;
+                         SWAP ;
+                         UNPAIR ;
+                         SWAP ;
+                         UNPAIR ;
+                         UNPAIR ;
+                         SWAP ;
+                         DUP 5 ;
+                         CDR ;
+                         SOME ;
+                         DIG 5 ;
+                         CAR ;
+                         UPDATE ;
+                         SWAP ;
+                         PAIR ;
+                         PAIR ;
+                         SWAP ;
+                         PAIR } } ;
+                 NIL operation } } ;
+         NIL operation ;
+         SWAP ;
+         ITER { CONS } ;
+         PAIR } ;
+  view "get_fee" unit nat { CDR ; CAR ; GET 5 } ;
+  view "get_fee_recipient" unit address { CDR ; CAR ; GET 6 } ;
+  view "get_manager" unit address { CDR ; GET 3 ; CAR } ;
+  view "get_swap"
+       nat
+       (pair (address %issuer)
+             (pair (address %fa2)
+                   (pair (nat %objkt_id)
+                         (pair (nat %objkt_amount)
+                               (pair (mutez %xtz_per_objkt) (pair (nat %royalties) (address %creator)))))))
+       { UNPAIR ;
+         SWAP ;
+         DUP ;
+         DUG 2 ;
+         GET 7 ;
+         SWAP ;
+         DUP ;
+         DUG 2 ;
+         MEM ;
+         IF {} { PUSH string "MP_WRONG_SWAP_ID" ; FAILWITH } ;
+         SWAP ;
+         GET 7 ;
+         SWAP ;
+         GET ;
+         IF_NONE { PUSH int 591 ; FAILWITH } {} } ;
+  view "get_swaps_counter" unit nat { CDR ; CAR ; GET 3 } ;
+  view "has_swap" nat bool { UNPAIR ; SWAP ; GET 7 ; SWAP ; MEM } ;
+  view "is_allowed_fa2"
+       address
+       bool
+       { UNPAIR ; SWAP ; CAR ; CAR ; CAR ; SWAP ; MEM } }
