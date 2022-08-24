@@ -1,0 +1,613 @@
+{ parameter
+    (or (or (or (or (option %_delegate key_hash) (address %_set_administrator))
+                (or (pair %_withdraw_baking_rewards (mutez %amount) (address %to))
+                    (address %add_administrator)))
+            (or (or (pair %assign_role (option %limit_to address) (pair (string %role) (address %user)))
+                    (pair %create_role
+                       (pair (set %initial_permissions string)
+                             (pair (nat %level_inv) (bool %may_create_new_permissions)))
+                       (pair (bool %may_create_roles) (pair (bool %may_promote) (string %name)))))
+                (or (bytes %generic)
+                    (or (address %remove_administrator)
+                        (pair %revoke_role (option %limit_to address) (pair (string %role) (address %user)))))))
+        (or (unit %default)
+            (or (pair %update_ep
+                   (or %ep_name (unit %_delegate) (unit %generic))
+                   (lambda %new_ep
+                      (pair (or (or (or (option %_delegate key_hash) (address %_set_administrator))
+                                    (or (pair %_withdraw_baking_rewards (mutez %amount) (address %to))
+                                        (address %add_administrator)))
+                                (or (or (pair %assign_role (option %limit_to address) (pair (string %role) (address %user)))
+                                        (pair %create_role
+                                           (pair (set %initial_permissions string)
+                                                 (pair (nat %level_inv) (bool %may_create_new_permissions)))
+                                           (pair (bool %may_create_roles) (pair (bool %may_promote) (string %name)))))
+                                    (or (bytes %generic)
+                                        (or (address %remove_administrator)
+                                            (pair %revoke_role (option %limit_to address) (pair (string %role) (address %user)))))))
+                            (pair (pair (pair (lambda %admin_check_lambda
+                                                 (pair (pair (address %address) (option %permission string))
+                                                       (pair (address %self_address) (address %self_admin)))
+                                                 bool)
+                                              (pair (address %administrator) (big_map %administrators address nat)))
+                                        (pair (set %all_permissions string)
+                                              (pair (mutez %collected_baking_awards) (big_map %extra_db bytes bytes))))
+                                  (pair (pair (address %identity)
+                                              (pair (big_map %limited_roles (pair address address) (map string nat))
+                                                    (big_map %metadata string bytes)))
+                                        (pair (big_map %role_permissions (pair string string) unit)
+                                              (pair (big_map %roles
+                                                       string
+                                                       (pair (pair (address %creator) (nat %level_inv))
+                                                             (pair (bool %may_create_new_permissions)
+                                                                   (pair (bool %may_create_roles) (bool %may_promote)))))
+                                                    (big_map %user_roles address (map string nat)))))))
+                      (pair (list operation)
+                            (pair (pair (pair (lambda %admin_check_lambda
+                                                 (pair (pair (address %address) (option %permission string))
+                                                       (pair (address %self_address) (address %self_admin)))
+                                                 bool)
+                                              (pair (address %administrator) (big_map %administrators address nat)))
+                                        (pair (set %all_permissions string)
+                                              (pair (mutez %collected_baking_awards) (big_map %extra_db bytes bytes))))
+                                  (pair (pair (address %identity)
+                                              (pair (big_map %limited_roles (pair address address) (map string nat))
+                                                    (big_map %metadata string bytes)))
+                                        (pair (big_map %role_permissions (pair string string) unit)
+                                              (pair (big_map %roles
+                                                       string
+                                                       (pair (pair (address %creator) (nat %level_inv))
+                                                             (pair (bool %may_create_new_permissions)
+                                                                   (pair (bool %may_create_roles) (bool %may_promote)))))
+                                                    (big_map %user_roles address (map string nat)))))))))
+                (pair %update_extra_db (bytes %key) (bytes %value))))) ;
+  storage
+    (pair (pair (pair (pair (lambda %admin_check_lambda
+                               (pair (pair (address %address) (option %permission string))
+                                     (pair (address %self_address) (address %self_admin)))
+                               bool)
+                            (pair (address %administrator) (big_map %administrators address nat)))
+                      (pair (set %all_permissions string)
+                            (pair (mutez %collected_baking_awards) (big_map %extra_db bytes bytes))))
+                (pair (pair (address %identity)
+                            (pair (big_map %limited_roles (pair address address) (map string nat))
+                                  (big_map %metadata string bytes)))
+                      (pair (big_map %role_permissions (pair string string) unit)
+                            (pair (big_map %roles
+                                     string
+                                     (pair (pair (address %creator) (nat %level_inv))
+                                           (pair (bool %may_create_new_permissions)
+                                                 (pair (bool %may_create_roles) (bool %may_promote)))))
+                                  (big_map %user_roles address (map string nat))))))
+          (big_map
+             nat
+             (lambda
+                (pair (or (or (or (option key_hash) address) (or (pair mutez address) address))
+                          (or (or (pair (option address) (pair string address))
+                                  (pair (pair (set string) (pair nat bool)) (pair bool (pair bool string))))
+                              (or bytes (or address (pair (option address) (pair string address))))))
+                      (pair (pair (pair (lambda (pair (pair address (option string)) (pair address address)) bool)
+                                        (pair address (big_map address nat)))
+                                  (pair (set string) (pair mutez (big_map bytes bytes))))
+                            (pair (pair address
+                                        (pair (big_map (pair address address) (map string nat)) (big_map string bytes)))
+                                  (pair (big_map (pair string string) unit)
+                                        (pair (big_map string (pair (pair address nat) (pair bool (pair bool bool))))
+                                              (big_map address (map string nat)))))))
+                (pair (list operation)
+                      (pair (pair (pair (lambda (pair (pair address (option string)) (pair address address)) bool)
+                                        (pair address (big_map address nat)))
+                                  (pair (set string) (pair mutez (big_map bytes bytes))))
+                            (pair (pair address
+                                        (pair (big_map (pair address address) (map string nat)) (big_map string bytes)))
+                                  (pair (big_map (pair string string) unit)
+                                        (pair (big_map string (pair (pair address nat) (pair bool (pair bool bool))))
+                                              (big_map address (map string nat)))))))))) ;
+  code { UNPAIR 3 ;
+         IF_LEFT
+           { DUP ;
+             IF_LEFT
+               { IF_LEFT
+                   { IF_LEFT { DROP ; PUSH nat 0 } { DROP ; PUSH nat 1 } }
+                   { IF_LEFT { DROP ; PUSH nat 2 } { DROP ; PUSH nat 3 } } }
+               { IF_LEFT
+                   { IF_LEFT { DROP ; PUSH nat 4 } { DROP ; PUSH nat 5 } }
+                   { IF_LEFT
+                       { DROP ; PUSH nat 6 }
+                       { IF_LEFT { DROP ; PUSH nat 7 } { DROP ; PUSH nat 8 } } } } ;
+             DUP 4 ;
+             SWAP ;
+             GET ;
+             IF_NONE { UNIT ; FAILWITH } {} ;
+             DUG 2 ;
+             PAIR ;
+             EXEC ;
+             UNPAIR }
+           { IF_LEFT
+               { DROP ;
+                 UNPAIR ;
+                 UNPAIR ;
+                 SWAP ;
+                 UNPAIR ;
+                 SWAP ;
+                 UNPAIR ;
+                 AMOUNT ;
+                 ADD ;
+                 PAIR ;
+                 SWAP ;
+                 PAIR ;
+                 SWAP ;
+                 PAIR ;
+                 PAIR }
+               { IF_LEFT
+                   { SWAP ;
+                     DUP ;
+                     CAR ;
+                     CAR ;
+                     CAR ;
+                     SWAP ;
+                     DUP ;
+                     DUG 3 ;
+                     CAR ;
+                     CAR ;
+                     GET 3 ;
+                     SELF_ADDRESS ;
+                     PAIR ;
+                     PUSH (option string) (Some "update_code") ;
+                     SENDER ;
+                     PAIR ;
+                     PAIR ;
+                     EXEC ;
+                     IF {} { UNIT ; FAILWITH } ;
+                     DUP ;
+                     CAR ;
+                     IF_LEFT
+                       { DROP ; DIG 2 ; SWAP ; CDR ; SOME ; PUSH nat 0 ; UPDATE ; SWAP }
+                       { DROP ; DIG 2 ; SWAP ; CDR ; SOME ; PUSH nat 6 ; UPDATE ; SWAP } }
+                   { SWAP ;
+                     DUP ;
+                     CAR ;
+                     CAR ;
+                     CAR ;
+                     SWAP ;
+                     DUP ;
+                     DUG 3 ;
+                     CAR ;
+                     CAR ;
+                     GET 3 ;
+                     SELF_ADDRESS ;
+                     PAIR ;
+                     PUSH (option string) (Some "update_extra_db") ;
+                     SENDER ;
+                     PAIR ;
+                     PAIR ;
+                     EXEC ;
+                     IF {} { UNIT ; FAILWITH } ;
+                     SWAP ;
+                     UNPAIR ;
+                     UNPAIR ;
+                     SWAP ;
+                     UNPAIR ;
+                     SWAP ;
+                     UNPAIR ;
+                     SWAP ;
+                     DUP 6 ;
+                     CDR ;
+                     SOME ;
+                     DIG 6 ;
+                     CAR ;
+                     UPDATE ;
+                     SWAP ;
+                     PAIR ;
+                     SWAP ;
+                     PAIR ;
+                     SWAP ;
+                     PAIR ;
+                     PAIR } } ;
+             NIL operation } ;
+         NIL operation ;
+         SWAP ;
+         ITER { CONS } ;
+         DUG 2 ;
+         PAIR ;
+         SWAP ;
+         PAIR } ;
+  view "is_admin"
+       address
+       bool
+       { UNPAIR 3 ; DIG 2 ; DROP ; SWAP ; CAR ; CAR ; GET 4 ; SWAP ; MEM } ;
+  view "is_admin_for"
+       (pair (address %caller) (pair (address %contract) (option %permission string)))
+       bool
+       { UNPAIR 3 ;
+         DIG 2 ;
+         DROP ;
+         SWAP ;
+         DUP ;
+         DUG 2 ;
+         CAR ;
+         CAR ;
+         GET 4 ;
+         SWAP ;
+         DUP ;
+         DUG 2 ;
+         CAR ;
+         MEM ;
+         DUP ;
+         IF { PUSH bool False }
+            { SWAP ;
+              DUP ;
+              DUG 2 ;
+              GET 4 ;
+              IF_NONE { PUSH bool False } { DROP ; PUSH bool True } } ;
+         IF { DUP 3 ;
+              GET 8 ;
+              DUP 3 ;
+              CAR ;
+              MEM ;
+              IF { DUP 3 ;
+                   GET 8 ;
+                   DUP 3 ;
+                   CAR ;
+                   GET ;
+                   IF_NONE { UNIT ; FAILWITH } {} ;
+                   ITER { CAR ;
+                          SWAP ;
+                          DUP ;
+                          DUG 2 ;
+                          IF { DROP 2 ; PUSH bool True }
+                             { SWAP ;
+                               DROP ;
+                               DUP 3 ;
+                               GET 5 ;
+                               DUP 3 ;
+                               GET 4 ;
+                               IF_NONE { UNIT ; FAILWITH } {} ;
+                               DIG 2 ;
+                               PAIR ;
+                               MEM } } }
+                 {} ;
+              DUP ;
+              IF { PUSH bool False }
+                 { DUP 3 ;
+                   GET 3 ;
+                   GET 3 ;
+                   DIG 2 ;
+                   DUP ;
+                   GET 3 ;
+                   SWAP ;
+                   DUP ;
+                   DUG 4 ;
+                   CAR ;
+                   PAIR ;
+                   MEM } ;
+              IF { DUP 3 ;
+                   GET 3 ;
+                   GET 3 ;
+                   DIG 2 ;
+                   DUP ;
+                   GET 3 ;
+                   SWAP ;
+                   DUP ;
+                   DUG 4 ;
+                   CAR ;
+                   PAIR ;
+                   GET ;
+                   IF_NONE { UNIT ; FAILWITH } {} ;
+                   ITER { CAR ;
+                          SWAP ;
+                          DUP ;
+                          DUG 2 ;
+                          IF { DROP 2 ; PUSH bool True }
+                             { SWAP ;
+                               DROP ;
+                               DUP 3 ;
+                               GET 5 ;
+                               DUP 3 ;
+                               GET 4 ;
+                               IF_NONE { UNIT ; FAILWITH } {} ;
+                               DIG 2 ;
+                               PAIR ;
+                               MEM } } ;
+                   SWAP ;
+                   DROP ;
+                   SWAP ;
+                   DROP }
+                 { SWAP ; DROP ; SWAP ; DROP } }
+            { SWAP ; DROP ; SWAP ; DROP } } ;
+  view "may_modify_all"
+       (pair (address %caller) (list %wallets address))
+       bool
+       { UNPAIR 3 ;
+         DIG 2 ;
+         DROP ;
+         PUSH bool True ;
+         PUSH nat 18446744073709551615 ;
+         PUSH nat 18446744073709551615 ;
+         DUP 5 ;
+         CAR ;
+         CAR ;
+         GET 4 ;
+         DUP 5 ;
+         CAR ;
+         MEM ;
+         IF { DROP 2 ;
+              PUSH nat 0 ;
+              DUP 4 ;
+              CAR ;
+              CAR ;
+              GET 4 ;
+              DUP 4 ;
+              CAR ;
+              GET ;
+              IF_NONE { UNIT ; FAILWITH } {} }
+            { DUP 5 ;
+              GET 8 ;
+              DUP 5 ;
+              CAR ;
+              MEM ;
+              IF { DUP 5 ;
+                   GET 8 ;
+                   DUP 5 ;
+                   CAR ;
+                   GET ;
+                   IF_NONE { UNIT ; FAILWITH } {} ;
+                   ITER { CAR ;
+                          DUP 3 ;
+                          DUP 7 ;
+                          GET 7 ;
+                          DUP 3 ;
+                          GET ;
+                          IF_NONE { UNIT ; FAILWITH } {} ;
+                          CAR ;
+                          CDR ;
+                          COMPARE ;
+                          LE ;
+                          IF { DIG 2 ;
+                               DROP ;
+                               DUP 5 ;
+                               GET 7 ;
+                               SWAP ;
+                               DUP ;
+                               DUG 2 ;
+                               GET ;
+                               IF_NONE { UNIT ; FAILWITH } {} ;
+                               CAR ;
+                               CDR ;
+                               DUG 2 ;
+                               SWAP ;
+                               DUP ;
+                               DUG 2 ;
+                               DUP 7 ;
+                               GET 8 ;
+                               DUP 7 ;
+                               CAR ;
+                               GET ;
+                               IF_NONE { UNIT ; FAILWITH } {} ;
+                               DUP 3 ;
+                               GET ;
+                               IF_NONE { UNIT ; FAILWITH } {} ;
+                               COMPARE ;
+                               LT ;
+                               IF { SWAP ;
+                                    DROP ;
+                                    DUP 5 ;
+                                    GET 8 ;
+                                    DUP 5 ;
+                                    CAR ;
+                                    GET ;
+                                    IF_NONE { UNIT ; FAILWITH } {} ;
+                                    SWAP ;
+                                    GET ;
+                                    IF_NONE { UNIT ; FAILWITH } {} }
+                                  { DROP } }
+                             { DROP } } }
+                 { DIG 2 ; DROP ; PUSH bool False ; DUG 2 } } ;
+         DUP 3 ;
+         IF { DUP 4 ;
+              CDR ;
+              ITER { PUSH nat 18446744073709551615 ;
+                     PUSH nat 18446744073709551615 ;
+                     DUP 8 ;
+                     CAR ;
+                     CAR ;
+                     GET 4 ;
+                     DUP 4 ;
+                     MEM ;
+                     IF { DROP 2 ;
+                          PUSH nat 0 ;
+                          DUP 7 ;
+                          CAR ;
+                          CAR ;
+                          GET 4 ;
+                          DUP 3 ;
+                          GET ;
+                          IF_NONE { UNIT ; FAILWITH } {} }
+                        { DUP 8 ;
+                          GET 8 ;
+                          DUP 4 ;
+                          MEM ;
+                          IF { DUP 8 ;
+                               GET 8 ;
+                               DUP 4 ;
+                               GET ;
+                               IF_NONE { UNIT ; FAILWITH } {} ;
+                               ITER { CAR ;
+                                      DUP 3 ;
+                                      DUP 10 ;
+                                      GET 7 ;
+                                      DUP 3 ;
+                                      GET ;
+                                      IF_NONE { UNIT ; FAILWITH } {} ;
+                                      CAR ;
+                                      CDR ;
+                                      COMPARE ;
+                                      LE ;
+                                      IF { DIG 2 ;
+                                           DROP ;
+                                           DUP 8 ;
+                                           GET 7 ;
+                                           SWAP ;
+                                           DUP ;
+                                           DUG 2 ;
+                                           GET ;
+                                           IF_NONE { UNIT ; FAILWITH } {} ;
+                                           CAR ;
+                                           CDR ;
+                                           DUG 2 ;
+                                           SWAP ;
+                                           DUP ;
+                                           DUG 2 ;
+                                           DUP 10 ;
+                                           GET 8 ;
+                                           DUP 6 ;
+                                           GET ;
+                                           IF_NONE { UNIT ; FAILWITH } {} ;
+                                           DUP 3 ;
+                                           GET ;
+                                           IF_NONE { UNIT ; FAILWITH } {} ;
+                                           COMPARE ;
+                                           LT ;
+                                           IF { SWAP ;
+                                                DROP ;
+                                                DUP 8 ;
+                                                GET 8 ;
+                                                DUP 4 ;
+                                                GET ;
+                                                IF_NONE { UNIT ; FAILWITH } {} ;
+                                                SWAP ;
+                                                GET ;
+                                                IF_NONE { UNIT ; FAILWITH } {} }
+                                              { DROP } }
+                                         { DROP } } }
+                             {} } ;
+                     DIG 5 ;
+                     IF { SWAP ; DUP ; DUG 2 ; DUP 6 ; COMPARE ; LE } { PUSH bool False } ;
+                     DUP ;
+                     DUG 6 ;
+                     IF { SWAP ;
+                          DUP ;
+                          DUG 2 ;
+                          DUP 6 ;
+                          COMPARE ;
+                          EQ ;
+                          IF { SWAP ;
+                               DROP ;
+                               SWAP ;
+                               DROP ;
+                               DIG 3 ;
+                               DROP ;
+                               SWAP ;
+                               DUP ;
+                               DUG 2 ;
+                               COMPARE ;
+                               GT ;
+                               NOT }
+                             { DROP 3 ; DIG 2 ; DROP ; PUSH bool True } }
+                        { DROP 3 ; DIG 2 ; DROP ; PUSH bool False } ;
+                     DUG 2 } ;
+              DROP 2 ;
+              SWAP ;
+              DROP ;
+              SWAP ;
+              DROP }
+            { DROP 2 ; SWAP ; DROP ; SWAP ; DROP } } ;
+  view "permissions_for"
+       (pair (address %caller) (address %contract))
+       (set string)
+       { UNPAIR 3 ;
+         DIG 2 ;
+         DROP ;
+         EMPTY_SET string ;
+         DUP 3 ;
+         CAR ;
+         CAR ;
+         GET 4 ;
+         DUP 3 ;
+         CAR ;
+         MEM ;
+         IF { DROP 2 ; CAR ; GET 3 }
+            { DUP 3 ;
+              CAR ;
+              GET 3 ;
+              ITER { DUP 4 ;
+                     GET 8 ;
+                     DUP 4 ;
+                     CAR ;
+                     MEM ;
+                     IF { DUP 4 ;
+                          GET 8 ;
+                          DUP 4 ;
+                          CAR ;
+                          GET ;
+                          IF_NONE { UNIT ; FAILWITH } {} ;
+                          ITER { CAR ;
+                                 DUP 5 ;
+                                 GET 5 ;
+                                 DUP 3 ;
+                                 DIG 2 ;
+                                 PAIR ;
+                                 MEM ;
+                                 IF { SWAP ; PUSH bool True ; DUP 3 ; UPDATE ; SWAP } {} } }
+                        {} ;
+                     SWAP ;
+                     DUP ;
+                     DUG 2 ;
+                     SWAP ;
+                     DUP ;
+                     DUG 2 ;
+                     MEM ;
+                     IF { PUSH bool False }
+                        { DUP 4 ;
+                          GET 3 ;
+                          GET 3 ;
+                          DIG 3 ;
+                          DUP ;
+                          CDR ;
+                          SWAP ;
+                          DUP ;
+                          DUG 5 ;
+                          CAR ;
+                          PAIR ;
+                          MEM } ;
+                     IF { DUP 4 ;
+                          GET 3 ;
+                          GET 3 ;
+                          DIG 3 ;
+                          DUP ;
+                          CDR ;
+                          SWAP ;
+                          DUP ;
+                          DUG 5 ;
+                          CAR ;
+                          PAIR ;
+                          GET ;
+                          IF_NONE { UNIT ; FAILWITH } {} ;
+                          ITER { DROP ; SWAP ; PUSH bool True ; DUP 3 ; UPDATE ; SWAP } ;
+                          DROP }
+                        { DROP } } ;
+              SWAP ;
+              DROP ;
+              SWAP ;
+              DROP } } ;
+  view "query_extra_db"
+       bytes
+       (option bytes)
+       { UNPAIR 3 ;
+         DIG 2 ;
+         DROP ;
+         NONE bytes ;
+         DUP 3 ;
+         CAR ;
+         GET 6 ;
+         DUP 3 ;
+         MEM ;
+         IF { DROP ;
+              SWAP ;
+              CAR ;
+              GET 6 ;
+              SWAP ;
+              GET ;
+              IF_NONE { UNIT ; FAILWITH } {} ;
+              SOME }
+            { SWAP ; DROP ; SWAP ; DROP } } }

@@ -1,0 +1,42 @@
+{ parameter
+    (or (address %_set_administrator)
+        (lambda %_update_kyc_lambda address (pair bool timestamp))) ;
+  storage
+    (pair (pair (pair (lambda %admin_check_lambda
+                         (pair (pair (address %address) (option %permission string))
+                               (pair (address %self_address) (address %self_admin)))
+                         bool)
+                      (address %administrator))
+                (pair (lambda %check_kyc address (pair bool timestamp))
+                      (big_map %metadata string bytes)))
+          (big_map
+             nat
+             (lambda
+                (pair (or address (lambda address (pair bool timestamp)))
+                      (pair (pair (lambda (pair (pair address (option string)) (pair address address)) bool) address)
+                            (pair (lambda address (pair bool timestamp)) (big_map string bytes))))
+                (pair (list operation)
+                      (pair (pair (lambda (pair (pair address (option string)) (pair address address)) bool) address)
+                            (pair (lambda address (pair bool timestamp)) (big_map string bytes))))))) ;
+  code { UNPAIR 3 ;
+         DUP ;
+         IF_LEFT { DROP ; PUSH nat 0 } { DROP ; PUSH nat 1 } ;
+         DUP 4 ;
+         SWAP ;
+         GET ;
+         IF_NONE { UNIT ; FAILWITH } {} ;
+         DUG 2 ;
+         PAIR ;
+         EXEC ;
+         UNPAIR ;
+         NIL operation ;
+         SWAP ;
+         ITER { CONS } ;
+         DUG 2 ;
+         PAIR ;
+         SWAP ;
+         PAIR } ;
+  view "kyc_check"
+       address
+       (pair bool timestamp)
+       { UNPAIR 3 ; DIG 2 ; DROP ; SWAP ; GET 3 ; SWAP ; EXEC } }

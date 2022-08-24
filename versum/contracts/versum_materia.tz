@@ -1,0 +1,592 @@
+{ parameter
+    (or (or (or (or (pair %_charge_materia (address %from_) (nat %amount))
+                    (or (unit %_genesis)
+                        (pair %_set_claim_root (bytes %info) (pair (bytes %new_root) (nat %proof_depth)))))
+                (or (or (address %_set_contract_registry) (bool %_set_contracts_mht))
+                    (or (address %_set_identity)
+                        (pair %_ul_all_contracts_mht (address %minter) (nat %token_id)))))
+            (or (or (or (pair %claim_materia (nat %amount) (list %proofs bytes)) (bytes %generic))
+                    (or (pair %mint
+                           (pair (address %address) (nat %amount))
+                           (pair (map %metadata string bytes) (nat %token_id)))
+                        (list %transfer
+                           (pair (address %from_)
+                                 (list %txs (pair (address %to_) (pair (nat %token_id) (nat %amount))))))))
+                (or (or (pair %update_extra_db (bytes %key) (bytes %value))
+                        (list %update_operators
+                           (or (pair %add_operator (address %owner) (pair (address %operator) (nat %token_id)))
+                               (pair %remove_operator (address %owner) (pair (address %operator) (nat %token_id))))))
+                    (or (pair %update_token_metadata (map %metadata string bytes) (nat %token_id))
+                        (pair %verify_min_balance (address %address) (nat %amount))))))
+        (or (or (pair %balance_of
+                   (list %requests (pair (address %owner) (nat %token_id)))
+                   (contract %callback
+                      (list (pair (pair %request (address %owner) (nat %token_id)) (nat %balance)))))
+                (or (pair %mutez_transfer (mutez %amount) (address %destination))
+                    (address %set_administrator)))
+            (or (pair %set_metadata (string %k) (bytes %v))
+                (or (bool %set_pause)
+                    (pair %update_ep
+                       (or %ep_name
+                          (or (unit %claim_materia) (or (unit %generic) (unit %mint)))
+                          (or (unit %transfer) (or (unit %update_operators) (unit %verify_min_balance))))
+                       (lambda %new_ep
+                          (pair (or (or (or (pair %_charge_materia (address %from_) (nat %amount))
+                                            (or (unit %_genesis)
+                                                (pair %_set_claim_root (bytes %info) (pair (bytes %new_root) (nat %proof_depth)))))
+                                        (or (or (address %_set_contract_registry) (bool %_set_contracts_mht))
+                                            (or (address %_set_identity)
+                                                (pair %_ul_all_contracts_mht (address %minter) (nat %token_id)))))
+                                    (or (or (or (pair %claim_materia (nat %amount) (list %proofs bytes)) (bytes %generic))
+                                            (or (pair %mint
+                                                   (pair (address %address) (nat %amount))
+                                                   (pair (map %metadata string bytes) (nat %token_id)))
+                                                (list %transfer
+                                                   (pair (address %from_)
+                                                         (list %txs (pair (address %to_) (pair (nat %token_id) (nat %amount))))))))
+                                        (or (or (pair %update_extra_db (bytes %key) (bytes %value))
+                                                (list %update_operators
+                                                   (or (pair %add_operator (address %owner) (pair (address %operator) (nat %token_id)))
+                                                       (pair %remove_operator (address %owner) (pair (address %operator) (nat %token_id))))))
+                                            (or (pair %update_token_metadata (map %metadata string bytes) (nat %token_id))
+                                                (pair %verify_min_balance (address %address) (nat %amount))))))
+                                (pair (pair (pair (pair (lambda %admin_check_lambda
+                                                           (pair (pair (address %address) (option %permission string))
+                                                                 (pair (address %self_address) (address %self_admin)))
+                                                           bool)
+                                                        (address %administrator))
+                                                  (pair (nat %all_tokens) (nat %claim_proof_depth)))
+                                            (pair (pair (bytes %claim_root) (bytes %claim_root_info))
+                                                  (pair (big_map %claimed address nat)
+                                                        (pair (address %contract_registry) (bool %contracts_may_hold_tokens_global)))))
+                                      (pair (pair (pair (big_map %extra_db bytes bytes) (bool %genesis))
+                                                  (pair (address %identity)
+                                                        (pair (big_map %ledger address nat) (big_map %metadata string bytes))))
+                                            (pair (pair (big_map %operators
+                                                           (pair (address %owner) (pair (address %operator) (nat %token_id)))
+                                                           unit)
+                                                        (bool %paused))
+                                                  (pair (big_map %token_extra_data
+                                                           nat
+                                                           (pair (bool %contracts_may_hold_token)
+                                                                 (pair (map %extra_fields string bytes) (address %minter))))
+                                                        (pair (big_map %token_metadata nat (pair (nat %token_id) (map %token_info string bytes)))
+                                                              (big_map %total_supply nat nat)))))))
+                          (pair (list operation)
+                                (pair (pair (pair (pair (lambda %admin_check_lambda
+                                                           (pair (pair (address %address) (option %permission string))
+                                                                 (pair (address %self_address) (address %self_admin)))
+                                                           bool)
+                                                        (address %administrator))
+                                                  (pair (nat %all_tokens) (nat %claim_proof_depth)))
+                                            (pair (pair (bytes %claim_root) (bytes %claim_root_info))
+                                                  (pair (big_map %claimed address nat)
+                                                        (pair (address %contract_registry) (bool %contracts_may_hold_tokens_global)))))
+                                      (pair (pair (pair (big_map %extra_db bytes bytes) (bool %genesis))
+                                                  (pair (address %identity)
+                                                        (pair (big_map %ledger address nat) (big_map %metadata string bytes))))
+                                            (pair (pair (big_map %operators
+                                                           (pair (address %owner) (pair (address %operator) (nat %token_id)))
+                                                           unit)
+                                                        (bool %paused))
+                                                  (pair (big_map %token_extra_data
+                                                           nat
+                                                           (pair (bool %contracts_may_hold_token)
+                                                                 (pair (map %extra_fields string bytes) (address %minter))))
+                                                        (pair (big_map %token_metadata nat (pair (nat %token_id) (map %token_info string bytes)))
+                                                              (big_map %total_supply nat nat))))))))))))) ;
+  storage
+    (pair (pair (pair (pair (pair (lambda %admin_check_lambda
+                                     (pair (pair (address %address) (option %permission string))
+                                           (pair (address %self_address) (address %self_admin)))
+                                     bool)
+                                  (address %administrator))
+                            (pair (nat %all_tokens) (nat %claim_proof_depth)))
+                      (pair (pair (bytes %claim_root) (bytes %claim_root_info))
+                            (pair (big_map %claimed address nat)
+                                  (pair (address %contract_registry) (bool %contracts_may_hold_tokens_global)))))
+                (pair (pair (pair (big_map %extra_db bytes bytes) (bool %genesis))
+                            (pair (address %identity)
+                                  (pair (big_map %ledger address nat) (big_map %metadata string bytes))))
+                      (pair (pair (big_map %operators
+                                     (pair (address %owner) (pair (address %operator) (nat %token_id)))
+                                     unit)
+                                  (bool %paused))
+                            (pair (big_map %token_extra_data
+                                     nat
+                                     (pair (bool %contracts_may_hold_token)
+                                           (pair (map %extra_fields string bytes) (address %minter))))
+                                  (pair (big_map %token_metadata nat (pair (nat %token_id) (map %token_info string bytes)))
+                                        (big_map %total_supply nat nat))))))
+          (big_map
+             nat
+             (lambda
+                (pair (or (or (or (pair address nat) (or unit (pair bytes (pair bytes nat))))
+                              (or (or address bool) (or address (pair address nat))))
+                          (or (or (or (pair nat (list bytes)) bytes)
+                                  (or (pair (pair address nat) (pair (map string bytes) nat))
+                                      (list (pair address (list (pair address (pair nat nat)))))))
+                              (or (or (pair bytes bytes)
+                                      (list (or (pair address (pair address nat)) (pair address (pair address nat)))))
+                                  (or (pair (map string bytes) nat) (pair address nat)))))
+                      (pair (pair (pair (pair (lambda (pair (pair address (option string)) (pair address address)) bool) address)
+                                        (pair nat nat))
+                                  (pair (pair bytes bytes) (pair (big_map address nat) (pair address bool))))
+                            (pair (pair (pair (big_map bytes bytes) bool)
+                                        (pair address (pair (big_map address nat) (big_map string bytes))))
+                                  (pair (pair (big_map (pair address (pair address nat)) unit) bool)
+                                        (pair (big_map nat (pair bool (pair (map string bytes) address)))
+                                              (pair (big_map nat (pair nat (map string bytes))) (big_map nat nat)))))))
+                (pair (list operation)
+                      (pair (pair (pair (pair (lambda (pair (pair address (option string)) (pair address address)) bool) address)
+                                        (pair nat nat))
+                                  (pair (pair bytes bytes) (pair (big_map address nat) (pair address bool))))
+                            (pair (pair (pair (big_map bytes bytes) bool)
+                                        (pair address (pair (big_map address nat) (big_map string bytes))))
+                                  (pair (pair (big_map (pair address (pair address nat)) unit) bool)
+                                        (pair (big_map nat (pair bool (pair (map string bytes) address)))
+                                              (pair (big_map nat (pair nat (map string bytes))) (big_map nat nat)))))))))) ;
+  code { CAST (pair (or (or (or (or (pair address nat) (or unit (pair bytes (pair bytes nat))))
+                                (or (or address bool) (or address (pair address nat))))
+                            (or (or (or (pair nat (list bytes)) bytes)
+                                    (or (pair (pair address nat) (pair (map string bytes) nat))
+                                        (list (pair address (list (pair address (pair nat nat)))))))
+                                (or (or (pair bytes bytes)
+                                        (list (or (pair address (pair address nat)) (pair address (pair address nat)))))
+                                    (or (pair (map string bytes) nat) (pair address nat)))))
+                        (or (or (pair (list (pair address nat)) (contract (list (pair (pair address nat) nat))))
+                                (or (pair mutez address) address))
+                            (or (pair string bytes)
+                                (or bool
+                                    (pair (or (or unit (or unit unit)) (or unit (or unit unit)))
+                                          (lambda
+                                             (pair (or (or (or (pair address nat) (or unit (pair bytes (pair bytes nat))))
+                                                           (or (or address bool) (or address (pair address nat))))
+                                                       (or (or (or (pair nat (list bytes)) bytes)
+                                                               (or (pair (pair address nat) (pair (map string bytes) nat))
+                                                                   (list (pair address (list (pair address (pair nat nat)))))))
+                                                           (or (or (pair bytes bytes)
+                                                                   (list (or (pair address (pair address nat)) (pair address (pair address nat)))))
+                                                               (or (pair (map string bytes) nat) (pair address nat)))))
+                                                   (pair (pair (pair (pair (lambda (pair (pair address (option string)) (pair address address)) bool) address)
+                                                                     (pair nat nat))
+                                                               (pair (pair bytes bytes) (pair (big_map address nat) (pair address bool))))
+                                                         (pair (pair (pair (big_map bytes bytes) bool)
+                                                                     (pair address (pair (big_map address nat) (big_map string bytes))))
+                                                               (pair (pair (big_map (pair address (pair address nat)) unit) bool)
+                                                                     (pair (big_map nat (pair bool (pair (map string bytes) address)))
+                                                                           (pair (big_map nat (pair nat (map string bytes))) (big_map nat nat)))))))
+                                             (pair (list operation)
+                                                   (pair (pair (pair (pair (lambda (pair (pair address (option string)) (pair address address)) bool) address)
+                                                                     (pair nat nat))
+                                                               (pair (pair bytes bytes) (pair (big_map address nat) (pair address bool))))
+                                                         (pair (pair (pair (big_map bytes bytes) bool)
+                                                                     (pair address (pair (big_map address nat) (big_map string bytes))))
+                                                               (pair (pair (big_map (pair address (pair address nat)) unit) bool)
+                                                                     (pair (big_map nat (pair bool (pair (map string bytes) address)))
+                                                                           (pair (big_map nat (pair nat (map string bytes))) (big_map nat nat)))))))))))))
+                    (pair (pair (pair (pair (pair (lambda (pair (pair address (option string)) (pair address address)) bool) address)
+                                            (pair nat nat))
+                                      (pair (pair bytes bytes) (pair (big_map address nat) (pair address bool))))
+                                (pair (pair (pair (big_map bytes bytes) bool)
+                                            (pair address (pair (big_map address nat) (big_map string bytes))))
+                                      (pair (pair (big_map (pair address (pair address nat)) unit) bool)
+                                            (pair (big_map nat (pair bool (pair (map string bytes) address)))
+                                                  (pair (big_map nat (pair nat (map string bytes))) (big_map nat nat))))))
+                          (big_map
+                             nat
+                             (lambda
+                                (pair (or (or (or (pair address nat) (or unit (pair bytes (pair bytes nat))))
+                                              (or (or address bool) (or address (pair address nat))))
+                                          (or (or (or (pair nat (list bytes)) bytes)
+                                                  (or (pair (pair address nat) (pair (map string bytes) nat))
+                                                      (list (pair address (list (pair address (pair nat nat)))))))
+                                              (or (or (pair bytes bytes)
+                                                      (list (or (pair address (pair address nat)) (pair address (pair address nat)))))
+                                                  (or (pair (map string bytes) nat) (pair address nat)))))
+                                      (pair (pair (pair (pair (lambda (pair (pair address (option string)) (pair address address)) bool) address)
+                                                        (pair nat nat))
+                                                  (pair (pair bytes bytes) (pair (big_map address nat) (pair address bool))))
+                                            (pair (pair (pair (big_map bytes bytes) bool)
+                                                        (pair address (pair (big_map address nat) (big_map string bytes))))
+                                                  (pair (pair (big_map (pair address (pair address nat)) unit) bool)
+                                                        (pair (big_map nat (pair bool (pair (map string bytes) address)))
+                                                              (pair (big_map nat (pair nat (map string bytes))) (big_map nat nat)))))))
+                                (pair (list operation)
+                                      (pair (pair (pair (pair (lambda (pair (pair address (option string)) (pair address address)) bool) address)
+                                                        (pair nat nat))
+                                                  (pair (pair bytes bytes) (pair (big_map address nat) (pair address bool))))
+                                            (pair (pair (pair (big_map bytes bytes) bool)
+                                                        (pair address (pair (big_map address nat) (big_map string bytes))))
+                                                  (pair (pair (big_map (pair address (pair address nat)) unit) bool)
+                                                        (pair (big_map nat (pair bool (pair (map string bytes) address)))
+                                                              (pair (big_map nat (pair nat (map string bytes))) (big_map nat nat))))))))))) ;
+         UNPAIR 3 ;
+         IF_LEFT
+           { DUP ;
+             IF_LEFT
+               { IF_LEFT
+                   { IF_LEFT
+                       { DROP ; PUSH nat 0 }
+                       { IF_LEFT { DROP ; PUSH nat 1 } { DROP ; PUSH nat 2 } } }
+                   { IF_LEFT
+                       { IF_LEFT { DROP ; PUSH nat 3 } { DROP ; PUSH nat 4 } }
+                       { IF_LEFT { DROP ; PUSH nat 5 } { DROP ; PUSH nat 6 } } } }
+               { IF_LEFT
+                   { IF_LEFT
+                       { IF_LEFT { DROP ; PUSH nat 7 } { DROP ; PUSH nat 8 } }
+                       { IF_LEFT { DROP ; PUSH nat 9 } { DROP ; PUSH nat 10 } } }
+                   { IF_LEFT
+                       { IF_LEFT { DROP ; PUSH nat 11 } { DROP ; PUSH nat 12 } }
+                       { IF_LEFT { DROP ; PUSH nat 13 } { DROP ; PUSH nat 14 } } } } ;
+             DUP 4 ;
+             SWAP ;
+             GET ;
+             IF_NONE { PUSH int -1 ; FAILWITH } {} ;
+             DUG 2 ;
+             PAIR ;
+             EXEC ;
+             UNPAIR }
+           { IF_LEFT
+               { IF_LEFT
+                   { SWAP ;
+                     DUP ;
+                     DUG 2 ;
+                     GET 5 ;
+                     CDR ;
+                     IF { PUSH string "FA2_PAUSED" ; FAILWITH } {} ;
+                     DUP ;
+                     CAR ;
+                     MAP { DUP 3 ;
+                           GET 9 ;
+                           SWAP ;
+                           DUP ;
+                           DUG 2 ;
+                           CDR ;
+                           MEM ;
+                           IF {} { PUSH string "FA2_TOKEN_UNDEFINED" ; FAILWITH } ;
+                           DUP 3 ;
+                           GET 3 ;
+                           GET 5 ;
+                           SWAP ;
+                           DUP ;
+                           DUG 2 ;
+                           CAR ;
+                           MEM ;
+                           IF { DUP 3 ;
+                                GET 3 ;
+                                GET 5 ;
+                                SWAP ;
+                                DUP ;
+                                DUG 2 ;
+                                CAR ;
+                                GET ;
+                                IF_NONE { PUSH int 421 ; FAILWITH } {} ;
+                                SWAP ;
+                                PAIR }
+                              { PUSH nat 0 ; SWAP ; PAIR } } ;
+                     NIL operation ;
+                     DIG 2 ;
+                     CDR ;
+                     PUSH mutez 0 ;
+                     DIG 3 ;
+                     TRANSFER_TOKENS ;
+                     CONS }
+                   { IF_LEFT
+                       { SWAP ;
+                         DUP ;
+                         DUG 2 ;
+                         CAR ;
+                         CAR ;
+                         CAR ;
+                         CDR ;
+                         SENDER ;
+                         COMPARE ;
+                         EQ ;
+                         IF {} { PUSH int 325 ; FAILWITH } ;
+                         DUP ;
+                         CDR ;
+                         CONTRACT unit ;
+                         IF_NONE { PUSH int 328 ; FAILWITH } {} ;
+                         NIL operation ;
+                         SWAP ;
+                         DIG 2 ;
+                         CAR ;
+                         UNIT ;
+                         TRANSFER_TOKENS ;
+                         CONS }
+                       { SWAP ;
+                         DUP ;
+                         CAR ;
+                         CAR ;
+                         CAR ;
+                         CAR ;
+                         SWAP ;
+                         DUP ;
+                         DUG 3 ;
+                         CAR ;
+                         CAR ;
+                         CAR ;
+                         CDR ;
+                         SELF_ADDRESS ;
+                         PAIR ;
+                         NONE string ;
+                         SENDER ;
+                         PAIR ;
+                         PAIR ;
+                         EXEC ;
+                         IF {} { PUSH string "FA2_NOT_ADMIN" ; FAILWITH } ;
+                         SWAP ;
+                         UNPAIR ;
+                         UNPAIR ;
+                         UNPAIR ;
+                         CAR ;
+                         DIG 4 ;
+                         SWAP ;
+                         PAIR ;
+                         PAIR ;
+                         PAIR ;
+                         PAIR ;
+                         NIL operation } } }
+               { IF_LEFT
+                   { SWAP ;
+                     DUP ;
+                     CAR ;
+                     CAR ;
+                     CAR ;
+                     CAR ;
+                     SWAP ;
+                     DUP ;
+                     DUG 3 ;
+                     CAR ;
+                     CAR ;
+                     CAR ;
+                     CDR ;
+                     SELF_ADDRESS ;
+                     PAIR ;
+                     NONE string ;
+                     SENDER ;
+                     PAIR ;
+                     PAIR ;
+                     EXEC ;
+                     IF {} { PUSH string "FA2_NOT_ADMIN" ; FAILWITH } ;
+                     SWAP ;
+                     UNPAIR ;
+                     SWAP ;
+                     UNPAIR ;
+                     UNPAIR ;
+                     SWAP ;
+                     UNPAIR ;
+                     SWAP ;
+                     UNPAIR ;
+                     SWAP ;
+                     DUP 7 ;
+                     CDR ;
+                     SOME ;
+                     DIG 7 ;
+                     CAR ;
+                     UPDATE ;
+                     SWAP ;
+                     PAIR ;
+                     SWAP ;
+                     PAIR ;
+                     SWAP ;
+                     PAIR ;
+                     PAIR ;
+                     SWAP ;
+                     PAIR }
+                   { IF_LEFT
+                       { SWAP ;
+                         DUP ;
+                         CAR ;
+                         CAR ;
+                         CAR ;
+                         CAR ;
+                         SWAP ;
+                         DUP ;
+                         DUG 3 ;
+                         CAR ;
+                         CAR ;
+                         CAR ;
+                         CDR ;
+                         SELF_ADDRESS ;
+                         PAIR ;
+                         NONE string ;
+                         SENDER ;
+                         PAIR ;
+                         PAIR ;
+                         EXEC ;
+                         IF {} { PUSH string "FA2_NOT_ADMIN" ; FAILWITH } ;
+                         SWAP ;
+                         UNPAIR ;
+                         SWAP ;
+                         UNPAIR ;
+                         SWAP ;
+                         UNPAIR ;
+                         CAR ;
+                         DIG 4 ;
+                         SWAP ;
+                         PAIR ;
+                         PAIR ;
+                         SWAP ;
+                         PAIR ;
+                         SWAP ;
+                         PAIR }
+                       { SWAP ;
+                         DUP ;
+                         CAR ;
+                         CAR ;
+                         CAR ;
+                         CAR ;
+                         SWAP ;
+                         DUP ;
+                         DUG 3 ;
+                         CAR ;
+                         CAR ;
+                         CAR ;
+                         CDR ;
+                         SELF_ADDRESS ;
+                         PAIR ;
+                         PUSH (option string) (Some "update_code") ;
+                         SENDER ;
+                         PAIR ;
+                         PAIR ;
+                         EXEC ;
+                         IF {} { PUSH int 598 ; FAILWITH } ;
+                         DUP ;
+                         CAR ;
+                         IF_LEFT
+                           { IF_LEFT
+                               { DROP ; DIG 2 ; SWAP ; CDR ; SOME ; PUSH nat 7 ; UPDATE ; SWAP }
+                               { IF_LEFT
+                                   { DROP ; DIG 2 ; SWAP ; CDR ; SOME ; PUSH nat 8 ; UPDATE ; SWAP }
+                                   { DROP ; DIG 2 ; SWAP ; CDR ; SOME ; PUSH nat 9 ; UPDATE ; SWAP } } }
+                           { IF_LEFT
+                               { DROP ; DIG 2 ; SWAP ; CDR ; SOME ; PUSH nat 10 ; UPDATE ; SWAP }
+                               { IF_LEFT
+                                   { DROP ; DIG 2 ; SWAP ; CDR ; SOME ; PUSH nat 12 ; UPDATE ; SWAP }
+                                   { DROP ; DIG 2 ; SWAP ; CDR ; SOME ; PUSH nat 14 ; UPDATE ; SWAP } } } } } ;
+                 NIL operation } } ;
+         NIL operation ;
+         SWAP ;
+         ITER { CONS } ;
+         DUG 2 ;
+         PAIR ;
+         SWAP ;
+         PAIR } ;
+  view "all_tokens"
+       unit
+       (list nat)
+       { UNPAIR 3 ;
+         DIG 2 ;
+         DROP ;
+         NIL nat ;
+         DUP 3 ;
+         CAR ;
+         CAR ;
+         GET 3 ;
+         PUSH nat 0 ;
+         DUP ;
+         DUP 3 ;
+         COMPARE ;
+         GT ;
+         LOOP { DUP ;
+                DIG 3 ;
+                SWAP ;
+                CONS ;
+                DUG 2 ;
+                PUSH nat 1 ;
+                ADD ;
+                DUP ;
+                DUP 3 ;
+                COMPARE ;
+                GT } ;
+         DROP 2 ;
+         SWAP ;
+         DROP ;
+         SWAP ;
+         DROP ;
+         NIL nat ;
+         SWAP ;
+         ITER { CONS } } ;
+  view "count_tokens" unit nat { GET 3 ; CAR ; CAR ; GET 3 } ;
+  view "does_token_exist"
+       nat
+       bool
+       { UNPAIR 3 ; DIG 2 ; DROP ; SWAP ; GET 9 ; SWAP ; MEM } ;
+  view "get_balance"
+       (pair (address %owner) (nat %token_id))
+       nat
+       { UNPAIR 3 ;
+         DIG 2 ;
+         DROP ;
+         SWAP ;
+         DUP ;
+         DUG 2 ;
+         GET 9 ;
+         SWAP ;
+         DUP ;
+         DUG 2 ;
+         CDR ;
+         MEM ;
+         IF {} { PUSH string "FA2_TOKEN_UNDEFINED" ; FAILWITH } ;
+         SWAP ;
+         GET 3 ;
+         GET 5 ;
+         SWAP ;
+         CAR ;
+         GET ;
+         IF_NONE { PUSH int 502 ; FAILWITH } {} } ;
+  view "is_operator"
+       (pair (address %owner) (pair (address %operator) (nat %token_id)))
+       bool
+       { UNPAIR 3 ;
+         DIG 2 ;
+         DROP ;
+         SWAP ;
+         GET 5 ;
+         CAR ;
+         SWAP ;
+         DUP ;
+         GET 4 ;
+         SWAP ;
+         DUP ;
+         GET 3 ;
+         SWAP ;
+         CAR ;
+         PAIR 3 ;
+         MEM } ;
+  view "query_extra_db"
+       bytes
+       (option bytes)
+       { UNPAIR 3 ;
+         DIG 2 ;
+         DROP ;
+         NONE bytes ;
+         DUP 3 ;
+         GET 3 ;
+         CAR ;
+         CAR ;
+         DUP 3 ;
+         MEM ;
+         IF { DROP ;
+              SWAP ;
+              GET 3 ;
+              CAR ;
+              CAR ;
+              SWAP ;
+              GET ;
+              IF_NONE { PUSH int 489 ; FAILWITH } {} ;
+              SOME }
+            { SWAP ; DROP ; SWAP ; DROP } } ;
+  view "total_supply"
+       nat
+       nat
+       { UNPAIR 3 ;
+         DIG 2 ;
+         DROP ;
+         SWAP ;
+         GET 10 ;
+         SWAP ;
+         GET ;
+         IF_NONE { PUSH int 527 ; FAILWITH } {} } }

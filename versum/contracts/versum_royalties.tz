@@ -1,0 +1,408 @@
+{ parameter
+    (or (or (or (or (option %_delegate key_hash) (address %_set_administrator))
+                (or (list %_set_require_royalties (pair address bool))
+                    (or (pair %_set_royalties_root
+                           (list %max_tokens (pair address nat))
+                           (pair (bytes %royalties_root) (bytes %royalties_root_info)))
+                        (pair %_set_royalty
+                           (pair (address %minter) (nat %royalty))
+                           (pair (list %splits (pair (address %address) (nat %pct)))
+                                 (pair %token_or_contract address (option nat)))))))
+            (or (or (pair %_withdraw_baking_rewards (mutez %amount) (address %to)) (bytes %generic))
+                (or (pair %pay_royalties_fa2
+                       (pair (nat %amount) (address %buyer))
+                       (pair (pair %fa2 address nat) (pair (address %seller) (pair %token address nat))))
+                    (or (pair %pay_royalties_xtz
+                           (address %buyer)
+                           (pair (address %seller) (pair %token address nat)))
+                        (pair %prove_royalties
+                           (pair (address %minter) (list %proofs bytes))
+                           (pair (nat %royalty)
+                                 (pair (list %splits (pair (address %address) (nat %pct)))
+                                       (pair %token_or_contract address (option nat)))))))))
+        (or (unit %default)
+            (or (pair %update_ep
+                   (or %ep_name
+                      (or (unit %_delegate) (unit %generic))
+                      (or (unit %pay_royalties_fa2) (unit %pay_royalties_xtz)))
+                   (lambda %new_ep
+                      (pair (or (or (or (option %_delegate key_hash) (address %_set_administrator))
+                                    (or (list %_set_require_royalties (pair address bool))
+                                        (or (pair %_set_royalties_root
+                                               (list %max_tokens (pair address nat))
+                                               (pair (bytes %royalties_root) (bytes %royalties_root_info)))
+                                            (pair %_set_royalty
+                                               (pair (address %minter) (nat %royalty))
+                                               (pair (list %splits (pair (address %address) (nat %pct)))
+                                                     (pair %token_or_contract address (option nat)))))))
+                                (or (or (pair %_withdraw_baking_rewards (mutez %amount) (address %to)) (bytes %generic))
+                                    (or (pair %pay_royalties_fa2
+                                           (pair (nat %amount) (address %buyer))
+                                           (pair (pair %fa2 address nat) (pair (address %seller) (pair %token address nat))))
+                                        (or (pair %pay_royalties_xtz
+                                               (address %buyer)
+                                               (pair (address %seller) (pair %token address nat)))
+                                            (pair %prove_royalties
+                                               (pair (address %minter) (list %proofs bytes))
+                                               (pair (nat %royalty)
+                                                     (pair (list %splits (pair (address %address) (nat %pct)))
+                                                           (pair %token_or_contract address (option nat)))))))))
+                            (pair (pair (pair (lambda %admin_check_lambda
+                                                 (pair (pair (address %address) (option %permission string))
+                                                       (pair (address %self_address) (address %self_admin)))
+                                                 bool)
+                                              (address %administrator))
+                                        (pair (mutez %collected_baking_awards)
+                                              (pair (big_map %contract_info address (pair (nat %max_token) (bool %require_royalties)))
+                                                    (big_map %extra_db bytes bytes))))
+                                  (pair (pair (address %identity) (big_map %metadata string bytes))
+                                        (pair (big_map %royalties
+                                                 (pair address (option nat))
+                                                 (pair (address %minter)
+                                                       (pair (nat %royalty) (list %splits (pair (address %address) (nat %pct))))))
+                                              (pair (bytes %royalties_root) (bytes %royalties_root_info))))))
+                      (pair (list operation)
+                            (pair (pair (pair (lambda %admin_check_lambda
+                                                 (pair (pair (address %address) (option %permission string))
+                                                       (pair (address %self_address) (address %self_admin)))
+                                                 bool)
+                                              (address %administrator))
+                                        (pair (mutez %collected_baking_awards)
+                                              (pair (big_map %contract_info address (pair (nat %max_token) (bool %require_royalties)))
+                                                    (big_map %extra_db bytes bytes))))
+                                  (pair (pair (address %identity) (big_map %metadata string bytes))
+                                        (pair (big_map %royalties
+                                                 (pair address (option nat))
+                                                 (pair (address %minter)
+                                                       (pair (nat %royalty) (list %splits (pair (address %address) (nat %pct))))))
+                                              (pair (bytes %royalties_root) (bytes %royalties_root_info))))))))
+                (pair %update_extra_db (bytes %key) (bytes %value))))) ;
+  storage
+    (pair (pair (pair (pair (lambda %admin_check_lambda
+                               (pair (pair (address %address) (option %permission string))
+                                     (pair (address %self_address) (address %self_admin)))
+                               bool)
+                            (address %administrator))
+                      (pair (mutez %collected_baking_awards)
+                            (pair (big_map %contract_info address (pair (nat %max_token) (bool %require_royalties)))
+                                  (big_map %extra_db bytes bytes))))
+                (pair (pair (address %identity) (big_map %metadata string bytes))
+                      (pair (big_map %royalties
+                               (pair address (option nat))
+                               (pair (address %minter)
+                                     (pair (nat %royalty) (list %splits (pair (address %address) (nat %pct))))))
+                            (pair (bytes %royalties_root) (bytes %royalties_root_info)))))
+          (big_map
+             nat
+             (lambda
+                (pair (or (or (or (option key_hash) address)
+                              (or (list (pair address bool))
+                                  (or (pair (list (pair address nat)) (pair bytes bytes))
+                                      (pair (pair address nat) (pair (list (pair address nat)) (pair address (option nat)))))))
+                          (or (or (pair mutez address) bytes)
+                              (or (pair (pair nat address) (pair (pair address nat) (pair address (pair address nat))))
+                                  (or (pair address (pair address (pair address nat)))
+                                      (pair (pair address (list bytes))
+                                            (pair nat (pair (list (pair address nat)) (pair address (option nat)))))))))
+                      (pair (pair (pair (lambda (pair (pair address (option string)) (pair address address)) bool) address)
+                                  (pair mutez (pair (big_map address (pair nat bool)) (big_map bytes bytes))))
+                            (pair (pair address (big_map string bytes))
+                                  (pair (big_map (pair address (option nat)) (pair address (pair nat (list (pair address nat)))))
+                                        (pair bytes bytes)))))
+                (pair (list operation)
+                      (pair (pair (pair (lambda (pair (pair address (option string)) (pair address address)) bool) address)
+                                  (pair mutez (pair (big_map address (pair nat bool)) (big_map bytes bytes))))
+                            (pair (pair address (big_map string bytes))
+                                  (pair (big_map (pair address (option nat)) (pair address (pair nat (list (pair address nat)))))
+                                        (pair bytes bytes)))))))) ;
+  code { UNPAIR 3 ;
+         IF_LEFT
+           { DUP ;
+             IF_LEFT
+               { IF_LEFT
+                   { IF_LEFT { DROP ; PUSH nat 0 } { DROP ; PUSH nat 1 } }
+                   { IF_LEFT
+                       { DROP ; PUSH nat 2 }
+                       { IF_LEFT { DROP ; PUSH nat 3 } { DROP ; PUSH nat 4 } } } }
+               { IF_LEFT
+                   { IF_LEFT { DROP ; PUSH nat 5 } { DROP ; PUSH nat 6 } }
+                   { IF_LEFT
+                       { DROP ; PUSH nat 7 }
+                       { IF_LEFT { DROP ; PUSH nat 8 } { DROP ; PUSH nat 9 } } } } ;
+             DUP 4 ;
+             SWAP ;
+             GET ;
+             IF_NONE { UNIT ; FAILWITH } {} ;
+             DUG 2 ;
+             PAIR ;
+             EXEC ;
+             UNPAIR }
+           { IF_LEFT
+               { DROP ;
+                 UNPAIR ;
+                 UNPAIR ;
+                 SWAP ;
+                 UNPAIR ;
+                 AMOUNT ;
+                 ADD ;
+                 PAIR ;
+                 SWAP ;
+                 PAIR ;
+                 PAIR }
+               { IF_LEFT
+                   { SWAP ;
+                     DUP ;
+                     CAR ;
+                     CAR ;
+                     CAR ;
+                     SWAP ;
+                     DUP ;
+                     DUG 3 ;
+                     CAR ;
+                     CAR ;
+                     CDR ;
+                     SELF_ADDRESS ;
+                     PAIR ;
+                     PUSH (option string) (Some "update_code") ;
+                     SENDER ;
+                     PAIR ;
+                     PAIR ;
+                     EXEC ;
+                     IF {} { UNIT ; FAILWITH } ;
+                     DUP ;
+                     CAR ;
+                     IF_LEFT
+                       { IF_LEFT
+                           { DROP ; DIG 2 ; SWAP ; CDR ; SOME ; PUSH nat 0 ; UPDATE ; SWAP }
+                           { DROP ; DIG 2 ; SWAP ; CDR ; SOME ; PUSH nat 6 ; UPDATE ; SWAP } }
+                       { IF_LEFT
+                           { DROP ; DIG 2 ; SWAP ; CDR ; SOME ; PUSH nat 7 ; UPDATE ; SWAP }
+                           { DROP ; DIG 2 ; SWAP ; CDR ; SOME ; PUSH nat 8 ; UPDATE ; SWAP } } }
+                   { SWAP ;
+                     DUP ;
+                     CAR ;
+                     CAR ;
+                     CAR ;
+                     SWAP ;
+                     DUP ;
+                     DUG 3 ;
+                     CAR ;
+                     CAR ;
+                     CDR ;
+                     SELF_ADDRESS ;
+                     PAIR ;
+                     PUSH (option string) (Some "update_extra_db") ;
+                     SENDER ;
+                     PAIR ;
+                     PAIR ;
+                     EXEC ;
+                     IF {} { UNIT ; FAILWITH } ;
+                     SWAP ;
+                     UNPAIR ;
+                     UNPAIR ;
+                     SWAP ;
+                     UNPAIR ;
+                     SWAP ;
+                     UNPAIR ;
+                     SWAP ;
+                     DUP 6 ;
+                     CDR ;
+                     SOME ;
+                     DIG 6 ;
+                     CAR ;
+                     UPDATE ;
+                     SWAP ;
+                     PAIR ;
+                     SWAP ;
+                     PAIR ;
+                     SWAP ;
+                     PAIR ;
+                     PAIR } } ;
+             NIL operation } ;
+         NIL operation ;
+         SWAP ;
+         ITER { CONS } ;
+         DUG 2 ;
+         PAIR ;
+         SWAP ;
+         PAIR } ;
+  view "minter"
+       (pair address nat)
+       (option address)
+       { UNPAIR 3 ;
+         DIG 2 ;
+         DROP ;
+         SWAP ;
+         DUP ;
+         DUG 2 ;
+         GET 5 ;
+         NONE nat ;
+         DUP 3 ;
+         CAR ;
+         PAIR ;
+         MEM ;
+         IF { SWAP ;
+              GET 5 ;
+              NONE nat ;
+              DIG 2 ;
+              CAR ;
+              PAIR ;
+              GET ;
+              IF_NONE { UNIT ; FAILWITH } {} ;
+              CAR ;
+              SOME }
+            { SWAP ;
+              DUP ;
+              DUG 2 ;
+              GET 5 ;
+              SWAP ;
+              DUP ;
+              DUG 2 ;
+              CDR ;
+              SOME ;
+              DUP 3 ;
+              CAR ;
+              PAIR ;
+              MEM ;
+              IF { SWAP ;
+                   GET 5 ;
+                   SWAP ;
+                   DUP ;
+                   DUG 2 ;
+                   CDR ;
+                   SOME ;
+                   DIG 2 ;
+                   CAR ;
+                   PAIR ;
+                   GET ;
+                   IF_NONE { UNIT ; FAILWITH } {} ;
+                   CAR ;
+                   SOME }
+                 { DROP 2 ; NONE address } } } ;
+  view "query_extra_db"
+       bytes
+       (option bytes)
+       { UNPAIR 3 ;
+         DIG 2 ;
+         DROP ;
+         NONE bytes ;
+         DUP 3 ;
+         CAR ;
+         GET 6 ;
+         DUP 3 ;
+         MEM ;
+         IF { DROP ;
+              SWAP ;
+              CAR ;
+              GET 6 ;
+              SWAP ;
+              GET ;
+              IF_NONE { UNIT ; FAILWITH } {} ;
+              SOME }
+            { SWAP ; DROP ; SWAP ; DROP } } ;
+  view "royalty"
+       (pair address nat)
+       (option nat)
+       { UNPAIR 3 ;
+         DIG 2 ;
+         DROP ;
+         SWAP ;
+         DUP ;
+         DUG 2 ;
+         GET 5 ;
+         NONE nat ;
+         DUP 3 ;
+         CAR ;
+         PAIR ;
+         MEM ;
+         IF { SWAP ;
+              GET 5 ;
+              NONE nat ;
+              DIG 2 ;
+              CAR ;
+              PAIR ;
+              GET ;
+              IF_NONE { UNIT ; FAILWITH } {} ;
+              GET 3 ;
+              SOME }
+            { SWAP ;
+              DUP ;
+              DUG 2 ;
+              GET 5 ;
+              SWAP ;
+              DUP ;
+              DUG 2 ;
+              CDR ;
+              SOME ;
+              DUP 3 ;
+              CAR ;
+              PAIR ;
+              MEM ;
+              IF { SWAP ;
+                   GET 5 ;
+                   SWAP ;
+                   DUP ;
+                   DUG 2 ;
+                   CDR ;
+                   SOME ;
+                   DIG 2 ;
+                   CAR ;
+                   PAIR ;
+                   GET ;
+                   IF_NONE { UNIT ; FAILWITH } {} ;
+                   GET 3 ;
+                   SOME }
+                 { DROP 2 ; NONE nat } } } ;
+  view "splits"
+       (pair address nat)
+       (option (list (pair (address %address) (nat %pct))))
+       { UNPAIR 3 ;
+         DIG 2 ;
+         DROP ;
+         SWAP ;
+         DUP ;
+         DUG 2 ;
+         GET 5 ;
+         NONE nat ;
+         DUP 3 ;
+         CAR ;
+         PAIR ;
+         MEM ;
+         IF { SWAP ;
+              GET 5 ;
+              NONE nat ;
+              DIG 2 ;
+              CAR ;
+              PAIR ;
+              GET ;
+              IF_NONE { UNIT ; FAILWITH } {} ;
+              GET 4 ;
+              SOME }
+            { SWAP ;
+              DUP ;
+              DUG 2 ;
+              GET 5 ;
+              SWAP ;
+              DUP ;
+              DUG 2 ;
+              CDR ;
+              SOME ;
+              DUP 3 ;
+              CAR ;
+              PAIR ;
+              MEM ;
+              IF { SWAP ;
+                   GET 5 ;
+                   SWAP ;
+                   DUP ;
+                   DUG 2 ;
+                   CDR ;
+                   SOME ;
+                   DIG 2 ;
+                   CAR ;
+                   PAIR ;
+                   GET ;
+                   IF_NONE { UNIT ; FAILWITH } {} ;
+                   GET 4 ;
+                   SOME }
+                 { DROP 2 ; NONE (list (pair address nat)) } } } }

@@ -1,0 +1,558 @@
+{ parameter
+    (or (or (or (or (or (option %_delegate key_hash)
+                        (or (address %_set_administrator) (address %_set_identity)))
+                    (or (address %_set_market)
+                        (or (address %_set_materia_address) (nat %_set_max_subscriptions))))
+                (or (or (address %_set_treasury)
+                        (or (pair %_withdraw_baking_rewards (mutez %amount) (address %to))
+                            (address %add_currency)))
+                    (or (address %add_fa2)
+                        (or (address %add_market)
+                            (pair %add_to_whitelist (address %contract) (nat %list_id))))))
+            (or (or (or (address %add_whitelist_for_my_tokens)
+                        (or (bytes %create_whitelist) (bytes %generic)))
+                    (or (pair %register_contract
+                           (address %address)
+                           (pair %info
+                              (bool %may_charge_materia)
+                              (pair (bool %may_handle_tokens)
+                                    (pair (bool %is_fa2)
+                                          (pair (bool %is_market)
+                                                (pair (bool %tokens_may_be_infused)
+                                                      (pair (address %royalty_adapter) (bool %is_accepted_currencies))))))))
+                        (or (pair %remove_from_whitelist (address %contract) (nat %list_id))
+                            (address %remove_whitelist_for_my_tokens))))
+                (or (or (pair %set_royalty_adapter (address %adapter) (address %contract))
+                        (or (pair %set_tokens_may_be_infused (address %adapter) (address %contract))
+                            (pair %transfer_whitelist_admin (nat %list_id) (address %new_admin))))
+                    (or (pair %update_whitelist_metadata (nat %list_id) (bytes %metadata))
+                        (or (nat %whitelist_subscribe) (nat %whitelist_unsubscribe))))))
+        (or (unit %default)
+            (or (pair %update_ep
+                   (or %ep_name (unit %_delegate) (unit %generic))
+                   (lambda %new_ep
+                      (pair (or (or (or (or (option %_delegate key_hash)
+                                            (or (address %_set_administrator) (address %_set_identity)))
+                                        (or (address %_set_market)
+                                            (or (address %_set_materia_address) (nat %_set_max_subscriptions))))
+                                    (or (or (address %_set_treasury)
+                                            (or (pair %_withdraw_baking_rewards (mutez %amount) (address %to))
+                                                (address %add_currency)))
+                                        (or (address %add_fa2)
+                                            (or (address %add_market)
+                                                (pair %add_to_whitelist (address %contract) (nat %list_id))))))
+                                (or (or (or (address %add_whitelist_for_my_tokens)
+                                            (or (bytes %create_whitelist) (bytes %generic)))
+                                        (or (pair %register_contract
+                                               (address %address)
+                                               (pair %info
+                                                  (bool %may_charge_materia)
+                                                  (pair (bool %may_handle_tokens)
+                                                        (pair (bool %is_fa2)
+                                                              (pair (bool %is_market)
+                                                                    (pair (bool %tokens_may_be_infused)
+                                                                          (pair (address %royalty_adapter) (bool %is_accepted_currencies))))))))
+                                            (or (pair %remove_from_whitelist (address %contract) (nat %list_id))
+                                                (address %remove_whitelist_for_my_tokens))))
+                                    (or (or (pair %set_royalty_adapter (address %adapter) (address %contract))
+                                            (or (pair %set_tokens_may_be_infused (address %adapter) (address %contract))
+                                                (pair %transfer_whitelist_admin (nat %list_id) (address %new_admin))))
+                                        (or (pair %update_whitelist_metadata (nat %list_id) (bytes %metadata))
+                                            (or (nat %whitelist_subscribe) (nat %whitelist_unsubscribe))))))
+                            (pair (pair (pair (pair (lambda %admin_check_lambda
+                                                       (pair (pair (address %address) (option %permission string))
+                                                             (pair (address %self_address) (address %self_admin)))
+                                                       bool)
+                                                    (address %administrator))
+                                              (pair (mutez %collected_baking_awards)
+                                                    (big_map %contracts
+                                                       address
+                                                       (pair (bool %may_charge_materia)
+                                                             (pair (bool %may_handle_tokens)
+                                                                   (pair (bool %is_fa2)
+                                                                         (pair (bool %is_market)
+                                                                               (pair (bool %tokens_may_be_infused)
+                                                                                     (pair (address %royalty_adapter) (bool %is_accepted_currencies))))))))))
+                                        (pair (pair (nat %cw_counter) (big_map %extra_db bytes bytes))
+                                              (pair (address %identity) (address %market))))
+                                  (pair (pair (pair (address %materia_address) (nat %max_subscriptions))
+                                              (pair (big_map %metadata string bytes)
+                                                    (big_map %minter_whitelist (pair (address %contract) (address %minter)) unit)))
+                                        (pair (pair (big_map %subscriptions address (set nat)) (address %treasury))
+                                              (pair (big_map %whitelist_items (pair (address %contract) (nat %whitelist)) unit)
+                                                    (big_map %whitelists nat (pair (address %admin) (bytes %metadata))))))))
+                      (pair (list operation)
+                            (pair (pair (pair (pair (lambda %admin_check_lambda
+                                                       (pair (pair (address %address) (option %permission string))
+                                                             (pair (address %self_address) (address %self_admin)))
+                                                       bool)
+                                                    (address %administrator))
+                                              (pair (mutez %collected_baking_awards)
+                                                    (big_map %contracts
+                                                       address
+                                                       (pair (bool %may_charge_materia)
+                                                             (pair (bool %may_handle_tokens)
+                                                                   (pair (bool %is_fa2)
+                                                                         (pair (bool %is_market)
+                                                                               (pair (bool %tokens_may_be_infused)
+                                                                                     (pair (address %royalty_adapter) (bool %is_accepted_currencies))))))))))
+                                        (pair (pair (nat %cw_counter) (big_map %extra_db bytes bytes))
+                                              (pair (address %identity) (address %market))))
+                                  (pair (pair (pair (address %materia_address) (nat %max_subscriptions))
+                                              (pair (big_map %metadata string bytes)
+                                                    (big_map %minter_whitelist (pair (address %contract) (address %minter)) unit)))
+                                        (pair (pair (big_map %subscriptions address (set nat)) (address %treasury))
+                                              (pair (big_map %whitelist_items (pair (address %contract) (nat %whitelist)) unit)
+                                                    (big_map %whitelists nat (pair (address %admin) (bytes %metadata))))))))))
+                (pair %update_extra_db (bytes %key) (bytes %value))))) ;
+  storage
+    (pair (pair (pair (pair (pair (lambda %admin_check_lambda
+                                     (pair (pair (address %address) (option %permission string))
+                                           (pair (address %self_address) (address %self_admin)))
+                                     bool)
+                                  (address %administrator))
+                            (pair (mutez %collected_baking_awards)
+                                  (big_map %contracts
+                                     address
+                                     (pair (bool %may_charge_materia)
+                                           (pair (bool %may_handle_tokens)
+                                                 (pair (bool %is_fa2)
+                                                       (pair (bool %is_market)
+                                                             (pair (bool %tokens_may_be_infused)
+                                                                   (pair (address %royalty_adapter) (bool %is_accepted_currencies))))))))))
+                      (pair (pair (nat %cw_counter) (big_map %extra_db bytes bytes))
+                            (pair (address %identity) (address %market))))
+                (pair (pair (pair (address %materia_address) (nat %max_subscriptions))
+                            (pair (big_map %metadata string bytes)
+                                  (big_map %minter_whitelist (pair (address %contract) (address %minter)) unit)))
+                      (pair (pair (big_map %subscriptions address (set nat)) (address %treasury))
+                            (pair (big_map %whitelist_items (pair (address %contract) (nat %whitelist)) unit)
+                                  (big_map %whitelists nat (pair (address %admin) (bytes %metadata)))))))
+          (big_map
+             nat
+             (lambda
+                (pair (or (or (or (or (option key_hash) (or address address)) (or address (or address nat)))
+                              (or (or address (or (pair mutez address) address))
+                                  (or address (or address (pair address nat)))))
+                          (or (or (or address (or bytes bytes))
+                                  (or (pair address
+                                            (pair bool (pair bool (pair bool (pair bool (pair bool (pair address bool)))))))
+                                      (or (pair address nat) address)))
+                              (or (or (pair address address) (or (pair address address) (pair nat address)))
+                                  (or (pair nat bytes) (or nat nat)))))
+                      (pair (pair (pair (pair (lambda (pair (pair address (option string)) (pair address address)) bool) address)
+                                        (pair mutez
+                                              (big_map
+                                                 address
+                                                 (pair bool (pair bool (pair bool (pair bool (pair bool (pair address bool)))))))))
+                                  (pair (pair nat (big_map bytes bytes)) (pair address address)))
+                            (pair (pair (pair address nat)
+                                        (pair (big_map string bytes) (big_map (pair address address) unit)))
+                                  (pair (pair (big_map address (set nat)) address)
+                                        (pair (big_map (pair address nat) unit) (big_map nat (pair address bytes)))))))
+                (pair (list operation)
+                      (pair (pair (pair (pair (lambda (pair (pair address (option string)) (pair address address)) bool) address)
+                                        (pair mutez
+                                              (big_map
+                                                 address
+                                                 (pair bool (pair bool (pair bool (pair bool (pair bool (pair address bool)))))))))
+                                  (pair (pair nat (big_map bytes bytes)) (pair address address)))
+                            (pair (pair (pair address nat)
+                                        (pair (big_map string bytes) (big_map (pair address address) unit)))
+                                  (pair (pair (big_map address (set nat)) address)
+                                        (pair (big_map (pair address nat) unit) (big_map nat (pair address bytes)))))))))) ;
+  code { UNPAIR 3 ;
+         IF_LEFT
+           { DUP ;
+             IF_LEFT
+               { IF_LEFT
+                   { IF_LEFT
+                       { IF_LEFT
+                           { DROP ; PUSH nat 0 }
+                           { IF_LEFT { DROP ; PUSH nat 1 } { DROP ; PUSH nat 2 } } }
+                       { IF_LEFT
+                           { DROP ; PUSH nat 3 }
+                           { IF_LEFT { DROP ; PUSH nat 4 } { DROP ; PUSH nat 5 } } } }
+                   { IF_LEFT
+                       { IF_LEFT
+                           { DROP ; PUSH nat 6 }
+                           { IF_LEFT { DROP ; PUSH nat 7 } { DROP ; PUSH nat 8 } } }
+                       { IF_LEFT
+                           { DROP ; PUSH nat 9 }
+                           { IF_LEFT { DROP ; PUSH nat 10 } { DROP ; PUSH nat 11 } } } } }
+               { IF_LEFT
+                   { IF_LEFT
+                       { IF_LEFT
+                           { DROP ; PUSH nat 12 }
+                           { IF_LEFT { DROP ; PUSH nat 13 } { DROP ; PUSH nat 14 } } }
+                       { IF_LEFT
+                           { DROP ; PUSH nat 15 }
+                           { IF_LEFT { DROP ; PUSH nat 16 } { DROP ; PUSH nat 17 } } } }
+                   { IF_LEFT
+                       { IF_LEFT
+                           { DROP ; PUSH nat 18 }
+                           { IF_LEFT { DROP ; PUSH nat 19 } { DROP ; PUSH nat 20 } } }
+                       { IF_LEFT
+                           { DROP ; PUSH nat 21 }
+                           { IF_LEFT { DROP ; PUSH nat 22 } { DROP ; PUSH nat 23 } } } } } ;
+             DUP 4 ;
+             SWAP ;
+             GET ;
+             IF_NONE { UNIT ; FAILWITH } {} ;
+             DUG 2 ;
+             PAIR ;
+             EXEC ;
+             UNPAIR }
+           { IF_LEFT
+               { DROP ;
+                 UNPAIR ;
+                 UNPAIR ;
+                 UNPAIR ;
+                 SWAP ;
+                 UNPAIR ;
+                 AMOUNT ;
+                 ADD ;
+                 PAIR ;
+                 SWAP ;
+                 PAIR ;
+                 PAIR ;
+                 PAIR }
+               { IF_LEFT
+                   { SWAP ;
+                     DUP ;
+                     CAR ;
+                     CAR ;
+                     CAR ;
+                     CAR ;
+                     SWAP ;
+                     DUP ;
+                     DUG 3 ;
+                     CAR ;
+                     CAR ;
+                     CAR ;
+                     CDR ;
+                     SELF_ADDRESS ;
+                     PAIR ;
+                     PUSH (option string) (Some "update_code") ;
+                     SENDER ;
+                     PAIR ;
+                     PAIR ;
+                     EXEC ;
+                     IF {} { UNIT ; FAILWITH } ;
+                     DUP ;
+                     CAR ;
+                     IF_LEFT
+                       { DROP ; DIG 2 ; SWAP ; CDR ; SOME ; PUSH nat 0 ; UPDATE ; SWAP }
+                       { DROP ; DIG 2 ; SWAP ; CDR ; SOME ; PUSH nat 14 ; UPDATE ; SWAP } }
+                   { SWAP ;
+                     DUP ;
+                     CAR ;
+                     CAR ;
+                     CAR ;
+                     CAR ;
+                     SWAP ;
+                     DUP ;
+                     DUG 3 ;
+                     CAR ;
+                     CAR ;
+                     CAR ;
+                     CDR ;
+                     SELF_ADDRESS ;
+                     PAIR ;
+                     PUSH (option string) (Some "update_extra_db") ;
+                     SENDER ;
+                     PAIR ;
+                     PAIR ;
+                     EXEC ;
+                     IF {} { UNIT ; FAILWITH } ;
+                     SWAP ;
+                     UNPAIR ;
+                     UNPAIR ;
+                     SWAP ;
+                     UNPAIR ;
+                     UNPAIR ;
+                     SWAP ;
+                     DUP 6 ;
+                     CDR ;
+                     SOME ;
+                     DIG 6 ;
+                     CAR ;
+                     UPDATE ;
+                     SWAP ;
+                     PAIR ;
+                     PAIR ;
+                     SWAP ;
+                     PAIR ;
+                     PAIR } } ;
+             NIL operation } ;
+         NIL operation ;
+         SWAP ;
+         ITER { CONS } ;
+         DUG 2 ;
+         PAIR ;
+         SWAP ;
+         PAIR } ;
+  view "identity" unit address { GET 3 ; CAR ; GET 5 } ;
+  view "is_accepted_currencies"
+       address
+       bool
+       { UNPAIR 3 ;
+         DIG 2 ;
+         DROP ;
+         SWAP ;
+         DUP ;
+         DUG 2 ;
+         CAR ;
+         CAR ;
+         GET 4 ;
+         SWAP ;
+         DUP ;
+         DUG 2 ;
+         MEM ;
+         IF { SWAP ;
+              CAR ;
+              CAR ;
+              GET 4 ;
+              SWAP ;
+              GET ;
+              IF_NONE { UNIT ; FAILWITH } {} ;
+              GET 12 }
+            { DROP 2 ; PUSH bool False } } ;
+  view "is_fa2"
+       address
+       bool
+       { UNPAIR 3 ;
+         DIG 2 ;
+         DROP ;
+         SWAP ;
+         DUP ;
+         DUG 2 ;
+         CAR ;
+         CAR ;
+         GET 4 ;
+         SWAP ;
+         DUP ;
+         DUG 2 ;
+         MEM ;
+         IF { SWAP ;
+              CAR ;
+              CAR ;
+              GET 4 ;
+              SWAP ;
+              GET ;
+              IF_NONE { UNIT ; FAILWITH } {} ;
+              GET 5 }
+            { DROP 2 ; PUSH bool False } } ;
+  view "is_market"
+       address
+       bool
+       { UNPAIR 3 ;
+         DIG 2 ;
+         DROP ;
+         SWAP ;
+         DUP ;
+         DUG 2 ;
+         CAR ;
+         CAR ;
+         GET 4 ;
+         SWAP ;
+         DUP ;
+         DUG 2 ;
+         MEM ;
+         IF { SWAP ;
+              CAR ;
+              CAR ;
+              GET 4 ;
+              SWAP ;
+              GET ;
+              IF_NONE { UNIT ; FAILWITH } {} ;
+              GET 7 }
+            { DROP 2 ; PUSH bool False } } ;
+  view "market" unit address { GET 3 ; CAR ; GET 6 } ;
+  view "materia" unit address { GET 3 ; GET 3 ; CAR ; CAR } ;
+  view "may_charge_materia"
+       address
+       bool
+       { UNPAIR 3 ;
+         DIG 2 ;
+         DROP ;
+         SWAP ;
+         DUP ;
+         DUG 2 ;
+         CAR ;
+         CAR ;
+         GET 4 ;
+         SWAP ;
+         DUP ;
+         DUG 2 ;
+         MEM ;
+         IF { SWAP ;
+              CAR ;
+              CAR ;
+              GET 4 ;
+              SWAP ;
+              GET ;
+              IF_NONE { UNIT ; FAILWITH } {} ;
+              CAR }
+            { DROP 2 ; PUSH bool False } } ;
+  view "may_handle_tokens"
+       address
+       bool
+       { UNPAIR 3 ;
+         DIG 2 ;
+         DROP ;
+         SWAP ;
+         DUP ;
+         DUG 2 ;
+         CAR ;
+         CAR ;
+         GET 4 ;
+         SWAP ;
+         DUP ;
+         DUG 2 ;
+         MEM ;
+         IF { SWAP ;
+              CAR ;
+              CAR ;
+              GET 4 ;
+              SWAP ;
+              GET ;
+              IF_NONE { UNIT ; FAILWITH } {} ;
+              GET 3 }
+            { DROP 2 ; PUSH bool False } } ;
+  view "may_handle_tokens_by"
+       (pair (address %contract) (address %minter))
+       bool
+       { UNPAIR 3 ;
+         DIG 2 ;
+         DROP ;
+         PUSH bool False ;
+         DUP 3 ;
+         CAR ;
+         CAR ;
+         GET 4 ;
+         DUP 3 ;
+         CAR ;
+         MEM ;
+         IF { DUP 3 ;
+              CAR ;
+              CAR ;
+              GET 4 ;
+              DUP 3 ;
+              CAR ;
+              GET ;
+              IF_NONE { UNIT ; FAILWITH } {} ;
+              GET 3 ;
+              IF { DROP ; PUSH bool True } {} }
+            {} ;
+         DUP ;
+         IF { SWAP ; DROP ; SWAP ; DROP }
+            { DUP 3 ;
+              GET 3 ;
+              GET 4 ;
+              DUP 3 ;
+              MEM ;
+              IF { DROP 3 ; PUSH bool True }
+                 { DUP 3 ;
+                   GET 5 ;
+                   CAR ;
+                   DUP 3 ;
+                   CDR ;
+                   MEM ;
+                   IF { PUSH bool False ;
+                        DUP 4 ;
+                        GET 5 ;
+                        CAR ;
+                        DUP 4 ;
+                        CDR ;
+                        GET ;
+                        IF_NONE { UNIT ; FAILWITH } {} ;
+                        ITER { DUP 5 ;
+                               GET 7 ;
+                               SWAP ;
+                               DUP 5 ;
+                               CAR ;
+                               PAIR ;
+                               MEM ;
+                               IF { DROP ; PUSH bool True } {} } ;
+                        SWAP ;
+                        DROP ;
+                        SWAP ;
+                        DROP ;
+                        SWAP ;
+                        DROP }
+                      { DROP 3 ; PUSH bool False } } } } ;
+  view "query_extra_db"
+       bytes
+       (option bytes)
+       { UNPAIR 3 ;
+         DIG 2 ;
+         DROP ;
+         NONE bytes ;
+         DUP 3 ;
+         CAR ;
+         GET 3 ;
+         CDR ;
+         DUP 3 ;
+         MEM ;
+         IF { DROP ;
+              SWAP ;
+              CAR ;
+              GET 3 ;
+              CDR ;
+              SWAP ;
+              GET ;
+              IF_NONE { UNIT ; FAILWITH } {} ;
+              SOME }
+            { SWAP ; DROP ; SWAP ; DROP } } ;
+  view "royalty_adapter"
+       address
+       address
+       { UNPAIR 3 ;
+         DIG 2 ;
+         DROP ;
+         SWAP ;
+         DUP ;
+         DUG 2 ;
+         CAR ;
+         CAR ;
+         GET 4 ;
+         SWAP ;
+         DUP ;
+         DUG 2 ;
+         MEM ;
+         IF { SWAP ;
+              CAR ;
+              CAR ;
+              GET 4 ;
+              SWAP ;
+              GET ;
+              IF_NONE { UNIT ; FAILWITH } {} ;
+              GET 11 }
+            { DROP 2 ; PUSH address "tz1burnburnburnburnburnburnburjAYjjX" } } ;
+  view "tokens_infusable"
+       address
+       bool
+       { UNPAIR 3 ;
+         DIG 2 ;
+         DROP ;
+         SWAP ;
+         DUP ;
+         DUG 2 ;
+         CAR ;
+         CAR ;
+         GET 4 ;
+         SWAP ;
+         DUP ;
+         DUG 2 ;
+         MEM ;
+         IF { SWAP ;
+              CAR ;
+              CAR ;
+              GET 4 ;
+              SWAP ;
+              GET ;
+              IF_NONE { UNIT ; FAILWITH } {} ;
+              GET 9 }
+            { DROP 2 ; PUSH bool False } } ;
+  view "treasury" unit address { GET 3 ; GET 5 ; CDR } }

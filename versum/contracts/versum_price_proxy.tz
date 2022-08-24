@@ -1,0 +1,300 @@
+{ parameter
+    (or (or (address %_set_administrator)
+            (pair %add_or_update_fiat_rate (nat %rate_usd) (string %symbol)))
+        (or (pair %add_price_lambda
+               (pair %currency_contract (address %contract) (option %token_id nat))
+               (lambda %price_lambda (option nat) nat))
+            (or (pair %add_usd_price_lambda
+                   (pair %currency_contract (address %contract) (option %token_id nat))
+                   (lambda %price_lambda (option nat) nat))
+                (lambda %update_xtz_usd_lambda unit nat)))) ;
+  storage
+    (pair (pair (pair (lambda %admin_check_lambda
+                         (pair (pair (address %address) (option %permission string))
+                               (pair (address %self_address) (address %self_admin)))
+                         bool)
+                      (pair (address %administrator) (big_map %fiat_table string nat)))
+                (pair (pair (big_map %metadata string bytes)
+                            (big_map %usd_price_lambdas
+                               (pair (address %contract) (option %token_id nat))
+                               (lambda (option nat) nat)))
+                      (pair (big_map %xtz_price_lambdas
+                               (pair (address %contract) (option %token_id nat))
+                               (lambda (option nat) nat))
+                            (lambda %xtz_usd_lambda unit nat))))
+          (big_map
+             nat
+             (lambda
+                (pair (or (or address (pair nat string))
+                          (or (pair (pair address (option nat)) (lambda (option nat) nat))
+                              (or (pair (pair address (option nat)) (lambda (option nat) nat)) (lambda unit nat))))
+                      (pair (pair (lambda (pair (pair address (option string)) (pair address address)) bool)
+                                  (pair address (big_map string nat)))
+                            (pair (pair (big_map string bytes) (big_map (pair address (option nat)) (lambda (option nat) nat)))
+                                  (pair (big_map (pair address (option nat)) (lambda (option nat) nat)) (lambda unit nat)))))
+                (pair (list operation)
+                      (pair (pair (lambda (pair (pair address (option string)) (pair address address)) bool)
+                                  (pair address (big_map string nat)))
+                            (pair (pair (big_map string bytes) (big_map (pair address (option nat)) (lambda (option nat) nat)))
+                                  (pair (big_map (pair address (option nat)) (lambda (option nat) nat)) (lambda unit nat)))))))) ;
+  code { UNPAIR 3 ;
+         DUP ;
+         IF_LEFT
+           { IF_LEFT { DROP ; PUSH nat 0 } { DROP ; PUSH nat 1 } }
+           { IF_LEFT
+               { DROP ; PUSH nat 2 }
+               { IF_LEFT { DROP ; PUSH nat 3 } { DROP ; PUSH nat 4 } } } ;
+         DUP 4 ;
+         SWAP ;
+         GET ;
+         IF_NONE { UNIT ; FAILWITH } {} ;
+         DUG 2 ;
+         PAIR ;
+         EXEC ;
+         UNPAIR ;
+         NIL operation ;
+         SWAP ;
+         ITER { CONS } ;
+         DUG 2 ;
+         PAIR ;
+         SWAP ;
+         PAIR } ;
+  view "fa2_price_fiat"
+       (pair (pair %from_currency address nat) (string %to_currency))
+       nat
+       { UNPAIR 3 ;
+         DIG 2 ;
+         DROP ;
+         PUSH nat 1 ;
+         DUP 3 ;
+         GET 3 ;
+         CDR ;
+         DUP 3 ;
+         CAR ;
+         CDR ;
+         SOME ;
+         DUP 4 ;
+         CAR ;
+         CAR ;
+         PAIR ;
+         MEM ;
+         IF { DUP 3 ;
+              GET 3 ;
+              CDR ;
+              DUP 3 ;
+              CAR ;
+              CDR ;
+              SOME ;
+              DUP 4 ;
+              CAR ;
+              CAR ;
+              PAIR ;
+              GET ;
+              IF_NONE { UNIT ; FAILWITH } {} ;
+              NONE nat ;
+              EXEC ;
+              SWAP ;
+              MUL ;
+              DIG 2 ;
+              CAR ;
+              GET 4 ;
+              DIG 2 ;
+              CDR ;
+              GET ;
+              IF_NONE { UNIT ; FAILWITH } {} ;
+              SWAP ;
+              MUL ;
+              PUSH nat 1000000 ;
+              SWAP ;
+              EDIV ;
+              IF_NONE { UNIT ; FAILWITH } { CAR } }
+            { DUP 3 ;
+              GET 3 ;
+              CDR ;
+              NONE nat ;
+              DUP 4 ;
+              CAR ;
+              CAR ;
+              PAIR ;
+              MEM ;
+              IF { DUP 3 ;
+                   GET 3 ;
+                   CDR ;
+                   NONE nat ;
+                   DUP 4 ;
+                   CAR ;
+                   CAR ;
+                   PAIR ;
+                   GET ;
+                   IF_NONE { UNIT ; FAILWITH } {} ;
+                   DUP 3 ;
+                   CAR ;
+                   CDR ;
+                   SOME ;
+                   EXEC ;
+                   SWAP ;
+                   MUL ;
+                   DIG 2 ;
+                   CAR ;
+                   GET 4 ;
+                   DIG 2 ;
+                   CDR ;
+                   GET ;
+                   IF_NONE { UNIT ; FAILWITH } {} ;
+                   SWAP ;
+                   MUL ;
+                   PUSH nat 1000000 ;
+                   SWAP ;
+                   EDIV ;
+                   IF_NONE { UNIT ; FAILWITH } { CAR } }
+                 { DUP 3 ;
+                   GET 5 ;
+                   DUP 3 ;
+                   CAR ;
+                   CDR ;
+                   SOME ;
+                   DUP 4 ;
+                   CAR ;
+                   CAR ;
+                   PAIR ;
+                   MEM ;
+                   IF { DUP 3 ;
+                        GET 5 ;
+                        DUP 3 ;
+                        CAR ;
+                        CDR ;
+                        SOME ;
+                        DUP 4 ;
+                        CAR ;
+                        CAR ;
+                        PAIR ;
+                        GET ;
+                        IF_NONE { UNIT ; FAILWITH } {} ;
+                        NONE nat ;
+                        EXEC ;
+                        SWAP ;
+                        MUL }
+                      { DUP 3 ;
+                        GET 5 ;
+                        NONE nat ;
+                        DUP 4 ;
+                        CAR ;
+                        CAR ;
+                        PAIR ;
+                        MEM ;
+                        IF { DUP 3 ;
+                             GET 5 ;
+                             NONE nat ;
+                             DUP 4 ;
+                             CAR ;
+                             CAR ;
+                             PAIR ;
+                             GET ;
+                             IF_NONE { UNIT ; FAILWITH } {} ;
+                             DUP 3 ;
+                             CAR ;
+                             CDR ;
+                             SOME ;
+                             EXEC ;
+                             SWAP ;
+                             MUL }
+                           { PUSH string "No price available" ; FAILWITH } } ;
+                   DUP 3 ;
+                   GET 6 ;
+                   UNIT ;
+                   EXEC ;
+                   SWAP ;
+                   MUL ;
+                   DIG 2 ;
+                   CAR ;
+                   GET 4 ;
+                   DIG 2 ;
+                   CDR ;
+                   GET ;
+                   IF_NONE { UNIT ; FAILWITH } {} ;
+                   SWAP ;
+                   MUL ;
+                   PUSH nat 1000000000000 ;
+                   SWAP ;
+                   EDIV ;
+                   IF_NONE { UNIT ; FAILWITH } { CAR } } } } ;
+  view "fa2_price_xtz"
+       (pair address nat)
+       nat
+       { UNPAIR 3 ;
+         DIG 2 ;
+         DROP ;
+         SWAP ;
+         DUP ;
+         DUG 2 ;
+         GET 5 ;
+         SWAP ;
+         DUP ;
+         DUG 2 ;
+         CDR ;
+         SOME ;
+         DUP 3 ;
+         CAR ;
+         PAIR ;
+         MEM ;
+         IF { SWAP ;
+              GET 5 ;
+              SWAP ;
+              DUP ;
+              DUG 2 ;
+              CDR ;
+              SOME ;
+              DIG 2 ;
+              CAR ;
+              PAIR ;
+              GET ;
+              IF_NONE { UNIT ; FAILWITH } {} ;
+              NONE nat ;
+              EXEC }
+            { SWAP ;
+              DUP ;
+              DUG 2 ;
+              GET 5 ;
+              NONE nat ;
+              DUP 3 ;
+              CAR ;
+              PAIR ;
+              MEM ;
+              IF { SWAP ;
+                   GET 5 ;
+                   NONE nat ;
+                   DUP 3 ;
+                   CAR ;
+                   PAIR ;
+                   GET ;
+                   IF_NONE { UNIT ; FAILWITH } {} ;
+                   SWAP ;
+                   CDR ;
+                   SOME ;
+                   EXEC }
+                 { PUSH string "No price available" ; FAILWITH } } } ;
+  view "xtz_price_fiat"
+       string
+       nat
+       { UNPAIR 3 ;
+         DIG 2 ;
+         DROP ;
+         PUSH nat 1 ;
+         DUP 3 ;
+         GET 6 ;
+         UNIT ;
+         EXEC ;
+         SWAP ;
+         MUL ;
+         DIG 2 ;
+         CAR ;
+         GET 4 ;
+         DIG 2 ;
+         GET ;
+         IF_NONE { UNIT ; FAILWITH } {} ;
+         SWAP ;
+         MUL ;
+         PUSH nat 1000000 ;
+         SWAP ;
+         EDIV ;
+         IF_NONE { UNIT ; FAILWITH } { CAR } } }
