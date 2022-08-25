@@ -38,8 +38,6 @@ fi
 #Versum KYC proxy -> KT1CdAeM5FzmtUVypP6RnihDBxzj5ssYLhUK
 #Versum Price proxy -> KT1LZoWxTR6c6HNZVsKZaEpcyujGgJdvCNCV
 
-echo "" > contracts.env
-
 mkdir -p data
 
 # echo "Downloading contract codes..."
@@ -80,7 +78,9 @@ mkdir -p data
 # tezos-client -E $MAINNET_NODE get contract code for KT1LZoWxTR6c6HNZVsKZaEpcyujGgJdvCNCV > contracts/versum_price_proxy.tz
 # echo "--> Downloaded VERSUM price proxy"
 
-echo
+# echo
+
+echo "" > contracts.env
 
 echo "Deploying Versum Administrator"
 tezos-client -E $TARGET_NODE originate contract versum_administrator_$NETWORK transferring 0 from $ORIGINATOR_ALIAS running contracts/versum_admin.tz --init '(Pair (Pair (Pair (Pair { { PUSH bool False ;
@@ -12046,8 +12046,8 @@ tezos-client -E $TARGET_NODE originate contract versum_fa2_$NETWORK transferring
             (Pair (Pair (Pair { Elt ""
                                     0x697066733a2f2f516d66324275726b74743451504e35694c416655456d5557523446456a574537446839573331695056744336426d }
                               (Pair 10000 {}))
-                        (Pair True (Pair {} False)))
-                  (Pair (Pair True (Pair {} 0)) (Pair {} (Pair {} {})))))
+                        (Pair False (Pair {} False)))
+                  (Pair (Pair False (Pair {} 0)) (Pair {} (Pair {} {})))))
       { Elt 1
             { { UNPAIR ;
                 IF_LEFT
@@ -14907,11 +14907,14 @@ echo "Configuring Versum materia"
 echo "Setting up Versum materia..."
 tezos-client -E $TARGET_NODE transfer 0 from $ORIGINATOR_ALIAS to $versum_materia --entrypoint "_genesis" --arg "Unit" --burn-cap 10  > data/versum_set_materia_identity.txt
 
-echo "Minting Versum item..."
+echo "Configuring Versum item..."
 tezos-client -E $TARGET_NODE transfer 0 from $ORIGINATOR_ALIAS to $versum_fa2 --entrypoint "_update_mint_slots" --arg '(Pair True { Pair False (Pair "'$ADMIN_ADDRESS'" 0) })' --burn-cap 10  > data/versum_update_minting.txt
 tezos-client -E $TARGET_NODE transfer 0 from $ORIGINATOR_ALIAS to $versum_fa2  --entrypoint "set_pause" --arg 'False' --burn-cap 10  > data/versum_unpause.txt
 tezos-client -E $TARGET_NODE transfer 0 from $ORIGINATOR_ALIAS to $versum_fa2  --entrypoint "_set_minting_paused" --arg 'False' --burn-cap 10  > data/versum_unpause_minting.txt
+
+echo "Minting Versum item..."
 tezos-client -E $TARGET_NODE transfer 0 from $ORIGINATOR_ALIAS to $versum_fa2  --entrypoint "mint" --arg '(Pair (Pair (Pair 1000000 {}) (Pair 1000000 { Elt "" 0x697066733a2f2f516d52537a66557876425874574751725a5971486a325a56755658364e567544384b6159747a6f6441394a555152 })) (Pair (Pair None False) (Pair 100 { Pair "'$ADMIN_ADDRESS'" 1000 })))' --burn-cap 10 > data/versum_mint.txt
 
-# echo "Creating swap..."
-# tezos-client -E $TARGET_NODE transfer 0 from $ORIGINATOR_ALIAS to $versum_market --entrypoint "create_swap" --arg 'Pair (Pair (Pair False 0) (Pair None 8000000)) (Pair (Pair None False) (Pair 8000000 (Pair (Pair "'$versum_fa2'" 0) 1)))' --burn-cap 10  > data/versum_set_materia_identity.txt
+echo "Creating swap..."
+tezos-client -E $TARGET_NODE transfer 0 from $ORIGINATOR_ALIAS to $versum_fa2 --entrypoint "update_operators" --arg '{ Left (Pair "'$ADMIN_ADDRESS'" (Pair "'$versum_market'" 0)) }' --burn-cap 10 > data/versum_update_operators.txt
+tezos-client -E $TARGET_NODE transfer 0 from $ORIGINATOR_ALIAS to $versum_market --entrypoint "create_swap" --arg 'Pair (Pair (Pair False 0) (Pair None 1000)) (Pair (Pair None False) (Pair 1000 (Pair (Pair "'$versum_fa2'" 0) 1000)))' --burn-cap 10  -D > data/versum_swap.txt
