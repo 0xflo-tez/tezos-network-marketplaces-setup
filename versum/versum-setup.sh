@@ -14919,4 +14919,7 @@ tezos-client -E $TARGET_NODE transfer 0 from $ORIGINATOR_ALIAS to $versum_fa2  -
 
 echo "Creating swap..."
 tezos-client -E $TARGET_NODE transfer 0 from $ORIGINATOR_ALIAS to $versum_fa2 --entrypoint "update_operators" --arg '{ Left (Pair "'$ADMIN_ADDRESS'" (Pair "'$versum_market'" 0)) }' --burn-cap 10 > data/versum_update_operators.txt
-tezos-client -E $TARGET_NODE transfer 0 from $ORIGINATOR_ALIAS to $versum_market --entrypoint "create_swap" --arg 'Pair (Pair (Pair False 0) (Pair None 1000)) (Pair (Pair None False) (Pair 1000 (Pair (Pair "'$versum_fa2'" 0) 1000)))' --burn-cap 10  -D > data/versum_swap.txt
+tezos-client -E $TARGET_NODE transfer 0 from $ORIGINATOR_ALIAS to $versum_market --entrypoint "create_swap" --arg 'Pair (Pair (Pair False 0) (Pair None 1000)) (Pair (Pair None False) (Pair 1000 (Pair (Pair "'$versum_fa2'" 0) 1000)))' --burn-cap 10 > data/versum_swap.txt
+
+echo "Collecting swap ..."
+tezos-client -E $TARGET_NODE transfer 0.01 from bob to $versum_market --entrypoint "collect_swap" --arg "Pair 1 0" --burn-cap 10 > data/versum_collect_swap.txt
