@@ -106,5 +106,9 @@ tezos-client -E $TARGET_NODE transfer 0 from $ORIGINATOR_ALIAS to $teia_market -
 echo "- Collect OBJKT..."
 tezos-client -E $TARGET_NODE transfer 0.001 from bob to $teia_market --entrypoint "collect" --arg '0' --burn-cap 10 > data/teia_collect.txt
 
+#tezos-client -E $TARGET_NODE transfer 0 from $ORIGINATOR_ALIAS to $teia_market --entrypoint "add_fa2" --arg "\"KT1P2VyFd61A3ukizJoX37nFF9fqZnihv7Lw\""
+#tezos-client -E https://rpc.tzkt.io/ithacanet/ transfer 0 from alice to KT1Anx515N2PK8A2ZX5uGNn7Gckh4WytLJmK --entrypoint "add_fa2" --arg "\"KT1P2VyFd61A3ukizJoX37nFF9fqZnihv7Lw\"" --burn-cap 0.01675
+#tezos-client -E http://tezos-node.dev.rarible.int transfer 0 from alice to KT1SMn9NzXNvdMvtaK8gE5GHgYj8ZxCuSyWN --entrypoint "add_fa2" --arg "\"KT1E59fZ5vxx67h8spyQqT8nC3k9scmBBkkd\"" --burn-cap 0.01675
+
 echo
 echo "All done !"
