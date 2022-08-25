@@ -14898,6 +14898,8 @@ echo "Setting Versum market for Versum Registry..."
 tezos-client -E $TARGET_NODE transfer 0 from $ORIGINATOR_ALIAS to $versum_registry --entrypoint "_set_market" --arg '"'$versum_market'"' --burn-cap 10 > data/versum_set_market_registry.txt
 echo "Setting Versum materia for Versum Registry..."
 tezos-client -E $TARGET_NODE transfer 0 from $ORIGINATOR_ALIAS to $versum_registry --entrypoint "_set_materia_address" --arg '"'$versum_materia'"' --burn-cap 10 > data/versum_set_materia_registry.txt
+echo "Registering Versum market for Versum Registry..."
+tezos-client -E $TARGET_NODE transfer 0 from $ORIGINATOR_ALIAS to $versum_registry --entrypoint "register_contract" --arg 'Pair "'$versum_market'" (Pair True (Pair True (Pair False (Pair True (Pair False (Pair "'$versum_royalties'" False))))))' --burn-cap 10 > data/versum_register_market_registry.txt
 
 echo "Configuring Versum identity"
 echo "Setting Versum materia for Versum identity..."
