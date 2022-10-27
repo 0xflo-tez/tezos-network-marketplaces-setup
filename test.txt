@@ -1,0 +1,142 @@
+Node is bootstrapped.
+This simulation failed:
+  Manager signed operations:
+    From: tz1NRh1vTn3b38m7Gg2qP81dqb5Kr2BAjwJV
+    Fee to the baker: ꜩ0
+    Expected counter: 40959039
+    Gas limit: 1040000
+    Storage limit: 60000 bytes
+    Transaction:
+      Amount: ꜩ0
+      From: tz1NRh1vTn3b38m7Gg2qP81dqb5Kr2BAjwJV
+      To: KT1N4Rrm6BU6229drs6scrH3vard1pPngMyA
+      Entrypoint: buy
+      Parameter: (Pair "KT1CAbPGHUWvkSA9bxMPkqSgabgsjtmRYEda"
+                       (Pair 7182
+                             (Pair "tz1M6BhHLfMyB2o6m9AuZUeLF5XdpRm96aWa"
+                                   (Pair 1
+                                         (Pair 0x050a000000160162973eb7780358871be6b69e18e066e868fb2c3500
+                                               (Pair 1 (Pair { Pair "tz1aXyTNdA1q7jUFrWnXGr1jK1bhPDfBbtVy" 700 } {})))))))
+      This transaction was BACKTRACKED, its expected effects (as follow) were NOT applied.
+      Updated storage:
+        { 0x00001e92f6162e1406b79d8e47dea13d3575a2ee216e ;
+          0 ;
+          0x01e7c0c86908ac305b3e3466fc425f57d3fb1a3d8200 ;
+          0x011d15e1f3df80c2e9dba36d9aef2beee798be0baa00 ;
+          None ;
+          10 ;
+          10000 ;
+          227014 }
+      Storage size: 13120 bytes
+      Consumed gas: 5623.150
+    Internal operations:
+      Transaction:
+        Amount: ꜩ0
+        From: KT1N4Rrm6BU6229drs6scrH3vard1pPngMyA
+        To: KT1ViAbsAM5rp89yVydEkbQozp1S12zqirwS
+        Entrypoint: manage_transfers
+        Parameter: { { Pair 0x01274e05765a19bddf5be2f547b0d8a41bf2bae80500 (Pair 7182 1) } ;
+                     0x00000fea74b9f830aca759f62bee2af7c03ad0ec2196 ;
+                     0x00001e92f6162e1406b79d8e47dea13d3575a2ee216e ;
+                     500000 ;
+                     1 ;
+                     0x050a000000160162973eb7780358871be6b69e18e066e868fb2c3500 ;
+                     0x00001e92f6162e1406b79d8e47dea13d3575a2ee216e ;
+                     0x00000fea74b9f830aca759f62bee2af7c03ad0ec2196 ;
+                     0x011d15e1f3df80c2e9dba36d9aef2beee798be0baa00 ;
+                     0 ;
+                     { Pair 0x0000e78efadd20f9b967023ba01016e5dc72223e7dd4 100 ;
+                       Pair 0x0000a364b05a7d0ee356319d9d2460eed3e2e3368129 700 } ;
+                     {} }
+        This transaction was BACKTRACKED, its expected effects (as follow) were NOT applied.
+        Updated storage:
+          { 0x00001e92f6162e1406b79d8e47dea13d3575a2ee216e ;
+            0x0160612f8af6dad04d4a2a8d264c99305f59dcec2400 ;
+            0x0000e78efadd20f9b967023ba01016e5dc72223e7dd4 ;
+            {} ;
+            { 0x011d15e1f3df80c2e9dba36d9aef2beee798be0baa00 ;
+              0x0157df48cf3b7019e6d52a9826e0c0fa65cc3b9d3d00 ;
+              0x0193d4d4e18dafcbea999ca2a389b490174a27435f00 } ;
+            204001 }
+        Storage size: 8569 bytes
+        Consumed gas: 11581.145
+      Transaction:
+        Amount: ꜩ0
+        From: KT1ViAbsAM5rp89yVydEkbQozp1S12zqirwS
+        To: KT1Ha4yFVeyzw6KRAdkzq6TxDHB97KG4pZe8
+        Entrypoint: transfer
+        Parameter: (Pair 0x00001e92f6162e1406b79d8e47dea13d3575a2ee216e
+                         (Pair 0x0000e78efadd20f9b967023ba01016e5dc72223e7dd4 5000))
+        This transaction was BACKTRACKED, its expected effects (as follow) were NOT applied.
+        Updated storage:
+          { Pair (Pair 134334 True) (Pair 134335 134336) ;
+            Pair 0x01c396e28b0fc7ea9abe596320e6c538294b9f17c700 False ;
+            134337 ;
+            100000000000000 }
+        Updated big_maps:
+          Set map(134335)[0x00001e92f6162e1406b79d8e47dea13d3575a2ee216e] to 4995000
+          Set map(134335)[0x0000e78efadd20f9b967023ba01016e5dc72223e7dd4] to 5000
+          Set map(134334)[(Pair 0x00001e92f6162e1406b79d8e47dea13d3575a2ee216e
+                0x01e7c0c86908ac305b3e3466fc425f57d3fb1a3d8200)] to 495000
+        Storage size: 457947 bytes
+        Consumed gas: 3072.687
+      Transaction:
+        Amount: ꜩ0
+        From: KT1ViAbsAM5rp89yVydEkbQozp1S12zqirwS
+        To: KT1Ha4yFVeyzw6KRAdkzq6TxDHB97KG4pZe8
+        Entrypoint: transfer
+        Parameter: (Pair 0x00001e92f6162e1406b79d8e47dea13d3575a2ee216e
+                         (Pair 0x0000a364b05a7d0ee356319d9d2460eed3e2e3368129 35000))
+        This transaction was BACKTRACKED, its expected effects (as follow) were NOT applied.
+        Updated storage:
+          { Pair (Pair 134334 True) (Pair 134335 134336) ;
+            Pair 0x01c396e28b0fc7ea9abe596320e6c538294b9f17c700 False ;
+            134337 ;
+            100000000000000 }
+        Updated big_maps:
+          Set map(134335)[0x00001e92f6162e1406b79d8e47dea13d3575a2ee216e] to 4960000
+          Set map(134335)[0x0000a364b05a7d0ee356319d9d2460eed3e2e3368129] to 35000
+          Set map(134334)[(Pair 0x00001e92f6162e1406b79d8e47dea13d3575a2ee216e
+                0x01e7c0c86908ac305b3e3466fc425f57d3fb1a3d8200)] to 460000
+        Storage size: 458016 bytes
+        Consumed gas: 3072.691
+      Transaction:
+        Amount: ꜩ0
+        From: KT1ViAbsAM5rp89yVydEkbQozp1S12zqirwS
+        To: KT1Ha4yFVeyzw6KRAdkzq6TxDHB97KG4pZe8
+        Entrypoint: transfer
+        Parameter: (Pair 0x00001e92f6162e1406b79d8e47dea13d3575a2ee216e
+                         (Pair 0x00000fea74b9f830aca759f62bee2af7c03ad0ec2196 460000))
+        This transaction was BACKTRACKED, its expected effects (as follow) were NOT applied.
+        Updated storage:
+          { Pair (Pair 134334 True) (Pair 134335 134336) ;
+            Pair 0x01c396e28b0fc7ea9abe596320e6c538294b9f17c700 False ;
+            134337 ;
+            100000000000000 }
+        Updated big_maps:
+          Set map(134335)[0x00001e92f6162e1406b79d8e47dea13d3575a2ee216e] to 4500000
+          Set map(134335)[0x00000fea74b9f830aca759f62bee2af7c03ad0ec2196] to 1500802864000
+          Unset map(134334)[(Pair 0x00001e92f6162e1406b79d8e47dea13d3575a2ee216e
+                0x01e7c0c86908ac305b3e3466fc425f57d3fb1a3d8200)]
+        Storage size: 457947 bytes
+        Consumed gas: 3272.825
+      Transaction:
+        Amount: ꜩ0
+        From: KT1ViAbsAM5rp89yVydEkbQozp1S12zqirwS
+        To: KT1CAbPGHUWvkSA9bxMPkqSgabgsjtmRYEda
+        Entrypoint: transfer
+        Parameter: { Pair 0x00000fea74b9f830aca759f62bee2af7c03ad0ec2196
+                          { Pair 0x00001e92f6162e1406b79d8e47dea13d3575a2ee216e (Pair 7182 1) } }
+        This operation FAILED.
+      Transaction:
+        Amount: ꜩ0
+        From: KT1N4Rrm6BU6229drs6scrH3vard1pPngMyA
+        To: KT1BEZNm3E25rZtXfPPKr5Jxygbi2kL2cCEW
+        Entrypoint: remove_sale
+        Parameter: { 0x01274e05765a19bddf5be2f547b0d8a41bf2bae80500 ;
+                     7182 ;
+                     0x00000fea74b9f830aca759f62bee2af7c03ad0ec2196 ;
+                     1 ;
+                     0x050a000000160162973eb7780358871be6b69e18e066e868fb2c3500 }
+        This operation was skipped
+
